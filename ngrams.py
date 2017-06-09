@@ -11,15 +11,12 @@ vocab = set(w.lower() for w in words.words())
 
 
 def get_words():
-    """generate english words from the whole gutemberg corpus"""
-
     with open('MA-band-names_2017-06-09.csv', 'r') as csvfile:
         reader = csv.reader(csvfile)
         print(csvfile)
         for row in reader:
             match_name_in_link = re.search('\'>(.*)</a>', row[1])
             if match_name_in_link is not None:
-                print(match_name_in_link.group(1))
                 yield match_name_in_link.group(1).replace(' ', '').lower()
 
 
@@ -33,7 +30,7 @@ def ngrams(N, word, strict=True):
         if word[i:i+N] in vocab:
             yield word[i:i+N]
 
-def m_most_common_ngram_chars(M=50, N=12):
+def m_most_common_ngram_chars(M=50, N=14):
     """gets the top M most common substrings of N characters in English words"""
     f = FreqDist(ngram for word in get_words() for ngram in ngrams(N, word))
     return f.most_common(M)
