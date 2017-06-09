@@ -11,14 +11,6 @@ vocab = set(w.lower() for w in words.words())
 
 import argparse
 
-parser = argparse.ArgumentParser(description='Print n-grams from metal-archives.com scraped CSV, sorted by count')
-parser.add_argument('--min', default=7, type=int,
-                    help='Minimum length of n-grams to search for')
-parser.add_argument('--max', default=14, type=int,
-                    help='Maximum length of n-grams to search for')
-parser.add_argument('--max_total', default=50, type=int,
-                    help='Maximum number of n-grams to output')
-
 def get_words():
     with open('MA-band-names_2017-06-09.csv', 'r') as csvfile:
         reader = csv.reader(csvfile)
@@ -44,6 +36,14 @@ def m_most_common_ngram_chars(min_len, max_len, max_total):
     return f.most_common(max_total)
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Print n-grams from metal-archives.com scraped CSV, sorted by count')
+    parser.add_argument('--min', default=7, type=int,
+                        help='Minimum length of n-grams to search for')
+    parser.add_argument('--max', default=14, type=int,
+                        help='Maximum length of n-grams to search for')
+    parser.add_argument('--max_total', default=50, type=int,
+                        help='Maximum number of n-grams to output')
+
     args = parser.parse_args()
     seven_letter_ngrams = m_most_common_ngram_chars(min_len = args.min, max_len=args.max, max_total = args.max_total)
     print("\n\n\n")
