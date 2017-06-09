@@ -33,11 +33,14 @@ def ngrams(N, word, strict=True):
         if word[i:i+N] in vocab:
             yield word[i:i+N]
 
-def m_most_common_ngram_chars(M=50, N=6):
+def m_most_common_ngram_chars(M=50, N=12):
     """gets the top M most common substrings of N characters in English words"""
     f = FreqDist(ngram for word in get_words() for ngram in ngrams(N, word))
     return f.most_common(M)
 
 if __name__ == "__main__":
-    # Uses the default values M=5, N=3
-    print(m_most_common_ngram_chars())
+    seven_letter_ngrams = m_most_common_ngram_chars()
+    print("\n\n\n")
+    for (word, count,) in seven_letter_ngrams:
+        print("                {} ({})".format(word, count))
+
