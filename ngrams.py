@@ -11,11 +11,13 @@ vocab = set(w.lower() for w in words.words())
 
 import argparse
 
-parser = argparse.ArgumentParser(description='Get ngrams from metal-archives.com scraped CSV')
-parser.add_argument('--size', default=10, type=int,
-                    help='Length of n-grams to search for')
-args = parser.parse_args()
-
+parser = argparse.ArgumentParser(description='Print n-grams from metal-archives.com scraped CSV, sorted by count')
+parser.add_argument('--min', default=7, type=int,
+                    help='Minimum length of n-grams to search for')
+parser.add_argument('--max', default=14, type=int,
+                    help='Maximum length of n-grams to search for')
+parser.add_argument('--max_total', default=50, type=int,
+                    help='Maximum number of n-grams to output')
 
 def get_words():
     with open('MA-band-names_2017-06-09.csv', 'r') as csvfile:
@@ -36,13 +38,14 @@ def ngrams(N, word, strict=True):
         if word[i:i+N] in vocab:
             yield word[i:i+N]
 
-def m_most_common_ngram_chars(N, M=50):
+def m_most_common_ngram_chars(min_len, max_len, max_total):
     """gets the top M most common substrings of N characters in English words"""
-    f = FreqDist(ngram for word in get_words() for ngram in ngrams(N, word))
-    return f.most_common(M)
+    f = FreqDist(ngram for word in get_words() for size in range(min_len, max_len + 1) for ngram in ngrams(size, word))
+    return f.most_common(max_total)
 
 if __name__ == "__main__":
-    seven_letter_ngrams = m_most_common_ngram_chars(M=50, N=args.size)
+    args = parser.parse_args()
+    seven_letter_ngrams = m_most_common_ngram_chars(min_len = args.min, max_len=args.max, max_total = args.max_total)
     print("\n\n\n")
     for (word, count,) in seven_letter_ngrams:
         print("                {} ({})".format(word, count))
