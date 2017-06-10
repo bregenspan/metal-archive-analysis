@@ -1,7 +1,6 @@
 from nltk import FreqDist
 from nltk.corpus import words
 import csv
-import re
 
 """
 Stolen from https://codereview.stackexchange.com/a/105990
@@ -12,12 +11,10 @@ vocab = set(w.lower() for w in words.words())
 import argparse
 
 def get_words():
-    with open('MA-band-names_2017-06-09.csv', 'r') as csvfile:
-        reader = csv.reader(csvfile)
+    with open('bands-2017-06-09.csv', 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
         for row in reader:
-            match_name_in_link = re.search('\'>(.*)</a>', row[1])
-            if match_name_in_link is not None:
-                yield match_name_in_link.group(1).replace(' ', '').lower()
+            yield row['Name'].replace(' ', '').lower()
 
 
 def ngrams(N, word, strict=True):
