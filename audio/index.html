@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+	<head></head>
+	<body>
+<script>
+
+const words = ['putrefaction', 'annihilation', 'misanthropic', 'resurrection', 'disfigurement', 'obliteration', 'evisceration'];
+
+const utterThis = new SpeechSynthesisUtterance();
+
+function speak() {
+	console.log('speak');
+  const p = new Promise((resolve, reject) => {
+	 window.speechSynthesis.cancel();
+		const voices = window.speechSynthesis.getVoices();
+		const goodVoices = voices.filter((v) => name === 'Google UK English Male');
+
+	  utterThis.voice = goodVoices[0] || voices[0];
+			if (utterThis._listener) {
+				utterThis.removeEventListener('end', utterThis._listener);
+			}
+			utterThis._listener = () => { 
+				console.log('uttered');
+				resolve();
+			};;
+  	  utterThis.addEventListener('end', utterThis._listener);
+      utterThis.pitch = 2;
+     utterThis.volume = 1;
+			utterThis.rate = 0.5;
+      utterThis.text = words[Math.floor(Math.random(1) * words.length)];
+  	  speechSynthesis.speak(utterThis);
+		console.log('speaking');
+  })
+  return p;
+}
+
+
+function init() {
+
+	var audio = new Audio();
+	audio.src = 'antagonist.mp3';
+	audio.controls = true;
+	audio.autoplay = false;
+	document.body.appendChild(audio);
+
+  // Fix up prefixing
+  window.AudioContext = window.AudioContext || window.webkitAudioContext;
+  context = new AudioContext();
+
+  var source = context.createMediaElementSource(audio);
+  source.connect(context.destination);
+
+	function playAndSpeak() {
+		console.log('playAndSpeak');
+		return source.mediaElement.play().then(() => {
+				console.log('playing');
+				return new Promise((resolve, reject) => {
+					window.setTimeout(() => {
+						source.mediaElement.pause();
+						source.mediaElement.currentTime = 0;
+						console.log('played');
+						resolve();
+					}, 3400);
+				}).then(speak)
+				.then(() => console.log('finished'))
+			});
+	}
+
+	playAndSpeak()
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+		.then(playAndSpeak)
+}
+
+init();
+
+</script>
+</body>
+</html>
