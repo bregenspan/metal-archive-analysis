@@ -56,33 +56,27 @@ function init() {
 				console.log('playing');
 				return new Promise((resolve, reject) => {
 					window.setTimeout(() => {
-						source.mediaElement.pause();
-						source.mediaElement.currentTime = 0;
+						//source.mediaElement.pause();
+						//source.mediaElement.currentTime = 0;
+            source.mediaElement.volume = 0.1;
 						console.log('played');
 						resolve();
 					}, 3400);
 				}).then(speak)
+        .then(() => {
+          source.mediaElement.pause();
+          source.mediaElement.volume = 1;
+          source.mediaElement.currentTime = 0;
+        })
 				.then(() => console.log('finished'))
 			});
 	}
 
-	playAndSpeak()
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
-		.then(playAndSpeak)
+  function playAndSpeakLoop() {
+    playAndSpeak().then(playAndSpeakLoop);
+  }
+
+  playAndSpeakLoop();
 }
 
 init();
