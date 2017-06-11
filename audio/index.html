@@ -4,109 +4,176 @@
     <body>
         <script>
 
-const words = ['putrefaction', 'annihilation', 'misanthropic', 'resurrection', 'disfigurement', 'obliteration', 'evisceration'];
-
-const utterThisGlobal = new SpeechSynthesisUtterance();
-
-const HIGHEST_PITCH = 2; // highest possible pitch to use for speech synthesis
-
-const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-const isChrome = window.chrome && !window.isOpera;
-
 /**
- * Scales a Speech Synthesis API pitch value such that its output
- *  sounds roughly equivalent between FF, Chrome, and Safari.
- */
-function scalePitchForBrowser(pitch) {
-    if (!isSafari) {
-        // Exit early, we're normalizing to FF and Chrome's pitch scale and
-        //  assuming that only Safari needs adjustment to match that scale.
-        return pitch;
-    }
-    return ((pitch - 1) // First, translate to easier scale to work with (-1 <> 1)
-        * 0.7 // Scale down to less extreme scale than Safari's
-        + 1); // Translate back to 0 <> 2 scale
-}
-
-
-// More unfortunate browser detection here, to work around a Chrome bug,
-//  wherein the second utterance object created fails to fire its "eng"
-//  listener.
-// NOTE: recycling existing utterance object is necessary for
-//  Chrome to behave correctly; otherwise the utterance's
-//  "end" listener fails upon second utterance.
-//  (Tested in Chrome 58.0.3029.110, 61.0.3127.0)
-// But in Firefox, new utterance necessary or we get same failure!
-function getUtterance() {
-    return (isChrome || isSafari) ? utterThisGlobal : new SpeechSynthesisUtterance();
-}
-
-function speak() {
-    const p = new Promise((resolve, reject) => {
-        const utterThis = getUtterance();
-        const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.indexOf('en') === 0);
-        const goodVoices = voices.filter((v) => name === 'Google UK English Male');
-
-        utterThis.voice = goodVoices[0] || voices[0];
-        if (utterThis._listener) {
-            utterThis.removeEventListener('end', utterThis._listener);
-            delete utterThis._listener;
-        }
-        utterThis._listener = () => { 
-            resolve();
-        };;
-        utterThis.addEventListener('end', utterThis._listener);
-        utterThis.pitch = scalePitchForBrowser(HIGHEST_PITCH);
-        utterThis.volume = 1;
-        utterThis.rate = 0.5;
-        utterThis.text = words[Math.floor(Math.random(1) * words.length)];
-
-        speechSynthesis.speak(utterThis);
-    })
-    return p;
-}
-
-/**
- * Returns Promise for first time the "playing" event occurs
+ * Returns Promise for when the "playing" event occurs
  * for specified Audio element
  * @param {HTMLAudioElement} audio element
+ * @returns Promise
  */
-function audioPlayPromise(audio) {
+function promisifyAudioPlaying(audio) {
     return new Promise((resolve, reject) => {
         audio.addEventListener('playing', resolve);
-    });
+    }).then(() => console.log('resolved'));
 }
 
-function init() {
+/**
+ * Plays HTMLAudioElement for specified time duration
+ * @param {HTMLAudioElement} audio element
+ * @param {Number} duration - time duration
+ * @returns Promise 
+ */
+function playAudioForDuration(audio, duration) {
+    // Attempt to play audio programmatically -- this won't work on browsers that ban autoplay
+    audio.play();
 
-    var audio = new Audio();
-    audio.src = 'antagonist.mp3';
-    audio.controls = true;
-    audio.autoplay = false;
-    document.body.appendChild(audio);
-
-    function playAndSpeak() {
-        audio.play();
-        return audioPlayPromise(audio).then(() => {
+    return promisifyAudioPlaying(audio)
+        .then(() => {
             return new Promise((resolve, reject) => {
                 window.setTimeout(() => {
                     audio.pause();
                     audio.currentTime = 0;
                     resolve();
-                }, 3400);
+                }, duration);
             })
-            .then(speak);
         });
-    }
-
-    function playAndSpeakLoop() {
-        playAndSpeak().then(playAndSpeakLoop);
-    }
-
-    playAndSpeakLoop();
 }
 
-init();
+
+const options = {
+    lang: 'en-', // prefix for matching Speech Synthesis voice languages
+    pitch: 2, // highest possible pitch
+    rate: 0.5, // slow it down!
+
+    // Audio clip to repeat in between vocals. (We're making a very bad song here;
+    //  vocals only occur during breaks in between all other music)
+    clip: 'antagonist.mp3', 
+
+    // Offset to end audio clip at, in ms, if clip is longer than the offset
+    clipEnd: 3400,
+
+    // Either an array of lyrics, or a function for getting next lyric
+    lyrics: function () {
+        const words = ['putrefaction', 'annihilation', 'misanthropic', 'resurrection', 'disfigurement', 'obliteration', 'evisceration'];
+        return words[Math.floor(Math.random(1) * words.length)];
+    }
+};
+
+class BadSongComposer {
+    constructor (options) {
+
+        if (!options.pitch || options.pitch < 0 || options.pitch > 2) {
+            throw new Error('`pitch` option should be between 0 and 2');
+        }
+        this.pitch = options.pitch || 1;
+
+        this.rate = options.rate || 1;
+
+        this.clipEnd = options.clipEnd || undefined;
+
+        if (!options.lyrics || (!(options.lyrics instanceof Array || typeof options.lyrics === 'function'))) {
+            throw new Error('`lyrics` option must be specified, and be an Array or function');
+        }
+        this.lyrics = options.lyrics;
+
+        this.lang = options.lang || 'en-';
+
+        if (!options.clip) {
+            throw new Error('`clip` option must be specified');
+        }
+
+        const audio = new Audio();
+        audio.src = options.clip;
+        audio.controls = true;
+        audio.autoplay = false;
+        document.body.appendChild(audio);
+        this.audio = audio;
+
+        // Unfortunately we need these browser detects to work around some cross-browser
+        //  differences that can't be feature-detected.
+        this._isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        this._isChrome = window.chrome && !window.isOpera;
+    }
+
+    speak() {
+        const utterance = this.getUtterance();
+        const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.indexOf(this.lang) === 0);
+
+        // FIXME: this should be configurable
+        const goodVoices = voices.filter((v) => name === 'Google UK English Male');
+        utterance.voice = goodVoices[0] || voices[0];
+
+        utterance.pitch = this.scalePitchForBrowser(this.pitch);
+        utterance.rate = this.rate;
+        utterance.text = this.lyrics();
+        
+        return new Promise((resolve, reject) => {
+            if (utterance._listener) {
+                utterance.removeEventListener('end', utterance._listener);
+                delete utterance._listener;
+            }
+            utterance._listener = () => { 
+                resolve();
+            };;
+            utterance.addEventListener('end', utterance._listener);
+            speechSynthesis.speak(utterance);
+        })
+    }
+
+    playOnce() {
+        return playAudioForDuration(this.audio, this.clipEnd)
+            .then(this.speak.bind(this));
+    }
+
+    play() {
+        const playAndSpeakLoop = () =>
+            this.playOnce().then(playAndSpeakLoop);
+        playAndSpeakLoop();
+    }
+
+    /**
+     * Scales a Speech Synthesis API pitch value such that its output
+     *  sounds roughly equivalent between FF, Chrome, and Safari.
+     */
+    scalePitchForBrowser(pitch) {
+        if (!this._isSafari) {
+            // Exit early, we're normalizing to FF and Chrome's pitch scale and
+            //  assuming that only Safari needs adjustment to match that scale.
+            return pitch;
+        }
+        return ((pitch - 1) // First, translate to easier scale to work with (-1 <> 1)
+            * 0.7 // Scale down to less extreme scale than Safari's
+            + 1); // Translate back to 0 <> 2 scale
+    }
+
+    /*
+        More unfortunate browser detection here, to work around a Chrome bug,
+         wherein the second utterance object created fails to fire its "eng"
+         listener.
+        NOTE: recycling existing utterance object is necessary for
+         Chrome to behave correctly; otherwise the utterance's
+         "end" listener fails upon second utterance.
+         (Tested in Chrome 58.0.3029.110, 61.0.3127.0)
+        But in Firefox, new utterance necessary or we get same failure!
+    */            
+    getUtterance() {
+        // Chrome (58.0.3029.110, 61.0.3127.0) and Safari seem to behave most reliably
+        // (e.g. not suddenly halt speech synthesis or "end" event firing without emitting
+        // any error), when re-using a single SpeechSynthesisUtterance instance.
+        if (this._isChrome || this._isSafari) {
+            if (!this._utterance) {
+               this._utterance = new SpeechSynthesisUtterance();
+            }
+            return this._utterance;
+        }
+
+        // Use fresh utterance for all other browsers (including FF which seems to need one)
+        return new SpeechSynthesisUtterance();
+    }
+
+}
+
+const composer = new BadSongComposer(options);
+composer.play();
 
         </script>
     </body>
