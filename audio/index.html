@@ -44,7 +44,7 @@ function getUtterance() {
 function speak() {
     const p = new Promise((resolve, reject) => {
         const utterThis = getUtterance();
-        const voices = window.speechSynthesis.getVoices();
+        const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.indexOf('en') === 0);
         const goodVoices = voices.filter((v) => name === 'Google UK English Male');
 
         utterThis.voice = goodVoices[0] || voices[0];
@@ -60,11 +60,22 @@ function speak() {
         utterThis.volume = 1;
         utterThis.rate = 0.5;
         utterThis.text = words[Math.floor(Math.random(1) * words.length)];
+
         speechSynthesis.speak(utterThis);
     })
     return p;
 }
 
+/**
+ * Returns Promise for first time the "playing" event occurs
+ * for specified Audio element
+ * @param {HTMLAudioElement} audio element
+ */
+function audioPlayPromise(audio) {
+    return new Promise((resolve, reject) => {
+        audio.addEventListener('playing', resolve);
+    });
+}
 
 function init() {
 
@@ -75,7 +86,8 @@ function init() {
     document.body.appendChild(audio);
 
     function playAndSpeak() {
-        return audio.play().then(() => {
+        audio.play();
+        return audioPlayPromise(audio).then(() => {
             return new Promise((resolve, reject) => {
                 window.setTimeout(() => {
                     audio.pause();
