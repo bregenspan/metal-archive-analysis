@@ -145,16 +145,9 @@ class BadSongComposer {
             + 1); // Translate back to 0 <> 2 scale
     }
 
-    /*
-        More unfortunate browser detection here, to work around a Chrome bug,
-         wherein the second utterance object created fails to fire its "end"
-         listener.
-        NOTE: recycling existing utterance object is necessary for
-         Chrome to behave correctly; otherwise the utterance's
-         "end" listener fails upon second utterance.
-         (Tested in Chrome 58.0.3029.110, 61.0.3127.0)
-        But in Firefox, new utterance necessary or we get same failure!
-    */            
+    /**
+     * Gets SpeechSynthesisUtterance() instance, creating one if necessary
+     */
     getUtterance() {
         // Chrome (58.0.3029.110, 61.0.3127.0) and Safari seem to behave most reliably
         // (e.g. not suddenly halt speech synthesis or "end" event firing without emitting
