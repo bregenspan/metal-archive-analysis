@@ -6,30 +6,61 @@
 
 const words = ['putrefaction', 'annihilation', 'misanthropic', 'resurrection', 'disfigurement', 'obliteration', 'evisceration'];
 
-const utterThis = new SpeechSynthesisUtterance();
+const utterThisGlobal = new SpeechSynthesisUtterance();
+
+const HIGHEST_PITCH = 2; // highest possible pitch to use for speech synthesis
+
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+const isChrome = window.chrome && !window.isOpera;
+
+/**
+ * Scales a Speech Synthesis API pitch value such that its output
+ *  sounds roughly equivalent between FF, Chrome, and Safari.
+ */
+function scalePitchForBrowser(pitch) {
+    if (!isSafari) {
+        // Exit early, we're normalizing to FF and Chrome's pitch scale and
+        //  assuming that only Safari needs adjustment to match that scale.
+        return pitch;
+    }
+    return ((pitch - 1) // First, translate to easier scale to work with (-1 <> 1)
+        * 0.7 // Scale down to less extreme scale than Safari's
+        + 1); // Translate back to 0 <> 2 scale
+}
+
+
+// More unfortunate browser detection here, to work around a Chrome bug,
+//  wherein the second utterance object created fails to fire its "eng"
+//  listener.
+// NOTE: recycling existing utterance object is necessary for
+//  Chrome to behave correctly; otherwise the utterance's
+//  "end" listener fails upon second utterance.
+//  (Tested in Chrome 58.0.3029.110, 61.0.3127.0)
+// But in Firefox, new utterance necessary or we get same failure!
+function getUtterance() {
+    return (isChrome || isSafari) ? utterThisGlobal : new SpeechSynthesisUtterance();
+}
 
 function speak() {
-    console.log('speak');
     const p = new Promise((resolve, reject) => {
-        window.speechSynthesis.cancel();
+        const utterThis = getUtterance();
         const voices = window.speechSynthesis.getVoices();
         const goodVoices = voices.filter((v) => name === 'Google UK English Male');
 
         utterThis.voice = goodVoices[0] || voices[0];
         if (utterThis._listener) {
             utterThis.removeEventListener('end', utterThis._listener);
+            delete utterThis._listener;
         }
         utterThis._listener = () => { 
-            console.log('uttered');
             resolve();
         };;
         utterThis.addEventListener('end', utterThis._listener);
-        utterThis.pitch = 2;
+        utterThis.pitch = scalePitchForBrowser(HIGHEST_PITCH);
         utterThis.volume = 1;
         utterThis.rate = 0.5;
         utterThis.text = words[Math.floor(Math.random(1) * words.length)];
         speechSynthesis.speak(utterThis);
-        console.log('speaking');
     })
     return p;
 }
@@ -43,32 +74,16 @@ function init() {
     audio.autoplay = false;
     document.body.appendChild(audio);
 
-    // Fix up prefixing
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    context = new AudioContext();
-
-    var source = context.createMediaElementSource(audio);
-    source.connect(context.destination);
-
     function playAndSpeak() {
-        console.log('playAndSpeak');
-        return source.mediaElement.play().then(() => {
-            console.log('playing');
+        return audio.play().then(() => {
             return new Promise((resolve, reject) => {
                 window.setTimeout(() => {
-                    //source.mediaElement.pause();
-                    //source.mediaElement.currentTime = 0;
-                    source.mediaElement.volume = 0.1;
-                    console.log('played');
+                    audio.pause();
+                    audio.currentTime = 0;
                     resolve();
                 }, 3400);
-            }).then(speak)
-            .then(() => {
-                source.mediaElement.pause();
-                source.mediaElement.volume = 1;
-                source.mediaElement.currentTime = 0;
             })
-            .then(() => console.log('finished'))
+            .then(speak);
         });
     }
 
