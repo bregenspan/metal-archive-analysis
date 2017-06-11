@@ -13,7 +13,6 @@ module.exports = {
         "promise"
     ],
     "rules": {  // Look, I'm fine going "Standard" to a point, but...
-        "indent": ["error", 4],
         "semi": ["error", "always"]
     }
 }
