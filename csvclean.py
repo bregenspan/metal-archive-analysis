@@ -6,12 +6,17 @@ with open('MA-band-names_2017-06-09.csv', 'r') as csv_in:
         reader = csv.reader(csv_in)
         writer = csv.writer(csv_out)
 
+        writer.writerow(['id', 'link', 'name', 'country', 'genre', 'status'])
+
         for row in reader:
-            link = row[1]
-            match_name_in_link = re.search('\'>(.*)</a>', link)
-            if match_name_in_link is None:
-                row[0] = ''
-            else:
-                row[0] = match_name_in_link.group(1)
+            (i, link, country, genre, status,) = row
+
+            status =  re.sub('<.*?>', '', status) # clean out HTML tags from Status field
+
+            link_id_name = re.search('<a href=\'(.*\/(\d+))\'>(.*)</a>', link)
+            if link_id_name is not None:
+                link = link_id_name.group(1)
+                id = link_id_name.group(2)
+                name = link_id_name.group(3)
+                writer.writerow([id, link, name, country, genre, status])
                         
-            writer.writerow(row)
