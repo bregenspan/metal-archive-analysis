@@ -1,39 +1,66 @@
+import argparse
 from nltk import FreqDist
 from nltk.corpus import words
-import csv
-
-"""
-Stolen from https://codereview.stackexchange.com/a/105990
-"""
+import sqlite3
 
 vocab = set(w.lower() for w in words.words())
-
-import argparse
-
-def get_words():
-    with open('bands-2017-06-09.csv', 'r') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            yield row['Name'].replace(' ', '').lower()
+DB_FILENAME = 'bands.db'
 
 
-def ngrams(N, word, strict=True):
-    """generate a sequence of N-sized substrings of word.
-    if strict is False, also account for P-sized substrings
-    at the end of the word where P < N"""
+def get_rows():
+    with sqlite3.connect(DB_FILENAME) as conn:
+        conn.row_factory = sqlite3.Row  # dicts for rows
+        cursor = conn.cursor()
+        for row in cursor.execute('SELECT * FROM bands'):
+            yield row
 
-    last = N - 1 if strict else 0
-    for i in range(len(word) - last):
-        if word[i:i+N] in vocab:
-            yield word[i:i+N]
 
-def m_most_common_ngram_chars(min_len, max_len, max_total):
-    """gets the top M most common substrings of N characters in English words"""
-    f = FreqDist(ngram for word in get_words() for size in range(min_len, max_len + 1) for ngram in ngrams(size, word))
-    return f.most_common(max_total)
+def ngrams(length, word):
+    """Generate a sequence of `length`-sized English word substrings
+        of `word`"""
+
+    for i in range(len(word) - (length - 1)):
+        if word[i:i + length] in vocab:
+            yield word[i:i + length]
+
+
+def all_ngrams_for_word(word, min_len, max_len):
+    return [ngram
+            for size in range(min_len, max_len + 1)
+            for ngram in ngrams(size, word)]
+
+
+def all_band_name_ngrams(min_len, max_len):
+    """Generates list of all English word ngrams between `min_len` and
+        `max_len` found in the band name list"""
+
+    ngrams = []
+
+    with sqlite3.connect(DB_FILENAME) as conn:
+        cursor = conn.cursor()
+        for row in get_rows():
+            normalized_name = row['name'].replace(' ', '').lower()
+            band_ngrams = all_ngrams_for_word(
+                normalized_name, min_len, max_len)
+            print([(row['id'], ngram,) for ngram in band_ngrams if ngram])
+            cursor.executemany(
+                '''
+                INSERT INTO
+                    `bands_ngrams` (band_id, ngram)
+                VALUES
+                    (?, ?)
+                ''',
+                [(row['id'], ngram,) for ngram in band_ngrams])
+
+            ngrams.extend(band_ngrams)
+
+    return ngrams
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Print n-grams from metal-archives.com scraped CSV, sorted by count')
+    parser = argparse.ArgumentParser(
+        description=('Print n-grams from metal-archives.com scraped CSV, '
+                     'sorted by count'))
     parser.add_argument('--min', default=7, type=int,
                         help='Minimum length of n-grams to search for')
     parser.add_argument('--max', default=14, type=int,
@@ -41,9 +68,19 @@ if __name__ == "__main__":
     parser.add_argument('--max_total', default=50, type=int,
                         help='Maximum number of n-grams to output')
 
-    args = parser.parse_args()
-    seven_letter_ngrams = m_most_common_ngram_chars(min_len = args.min, max_len=args.max, max_total = args.max_total)
-    print("\n\n\n")
-    for (word, count,) in seven_letter_ngrams:
-        print("                {} ({})".format(word, count))
+    with sqlite3.connect(DB_FILENAME) as conn:
+        cur = conn.cursor()
+        cur.execute('DROP TABLE IF EXISTS `bands_ngrams`')
+        cur.execute('''CREATE TABLE `bands_ngrams` (
+                        band_id INTEGER,
+                        ngram CHAR(50)
+                    )''')
 
+    args = parser.parse_args()
+    all_ngrams = all_band_name_ngrams(
+        min_len=args.min, max_len=args.max)
+
+    print([ng for ng in all_ngrams])
+    f = FreqDist(all_ngrams)
+    for (word, count,) in f.most_common(args.max_total):
+        print("{} ({})".format(word, count))
