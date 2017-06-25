@@ -31,8 +31,10 @@ function playAudioForDuration (audio, duration) {
         });
 }
 
-class BadSongComposer {
+class BadSongComposer extends EventEmitter {
   constructor (options) {
+    super();
+
     if (!options.vocals) {
       throw new Error('`vocals` configuration object should be defined');
     }
@@ -76,6 +78,7 @@ class BadSongComposer {
   }
 
   speak () {
+    const composer = this;
     const utterance = this.getUtterance();
     const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.indexOf(this.lang) === 0);
 
@@ -93,9 +96,13 @@ class BadSongComposer {
         delete utterance._listener;
       }
       utterance._listener = () => {
+        composer.emit('vocalComplete');
         resolve();
       };
       utterance.addEventListener('end', utterance._listener);
+
+      this.emit('vocalStart');
+      
       speechSynthesis.speak(utterance);
     });
   }

@@ -25,17 +25,28 @@
                 font-style: normal;
                 font-weight: bold;
             }
+
+            .band-list .selected {
+                color: #966;
+            }
+
+            .band-list li.selected em {
+                color: red;
+            }
         </style>
     </head>
     <body>
         <script src="band-list.js"></script>
+        <script src="./lib/event-emitter.js"></script>
         <script src="./audio/bad-song-composer.js"></script>
 
         <script>
-const FIXTURE = ['Steel Prophet', 'False Prophet', 'Prophets of Doom', 'Messiah Prophet', 'Prophetic Age', 'Black Prophets', 'Pontius Prophet', 'Prophet of Disasters', 'Prophet', 'Satanic Prophets', 'High Prophet', 'Inverted Prophet', 'Sturmprophet', 'Prophet', "Prophet's Eye", 'Weeping Prophet', 'False Prophet', 'Prophet', 'Sleeping Prophet', 'Concrete Prophet', 'Neurosplit Prophet', 'Dark Prophet', 'Prophetic', 'Dark Prophets', 'Prophet', 'Prophets on Vacation', 'Prophet Fulfilled', 'Blood of the Prophets', 'Prophets of War', 'Prophetic Disclosure', 'The Prophet', 'Aeternus Prophet', 'Disaster Prophet', 'Blasphemia Prophetica', 'Black Tar Prophet', 'Slaughter the Prophets', 'Doomsday Prophet', 'Pale Prophet', 'Prophets of the Rising Dead', 'Prophets of Saturn', "The Prophet's Whisper", 'Prophetic Scourge', 'Prophet of the Void', 'The Fallen Prophets', 'Prophetess', 'Silent Prophet', 'Feast for a Prophet'];
+        const FIXTURE = ['Steel Prophet', 'False Prophet', 'Prophets of Doom', 'Messiah Prophet', 'Prophetic Age', 'Black Prophets', 'Pontius Prophet', 'Prophet of Disasters', 'Prophet', 'Satanic Prophets', 'High Prophet', 'Inverted Prophet', 'Sturmprophet', 'Prophet', "Prophet's Eye", 'Weeping Prophet', 'False Prophet', 'Prophet', 'Sleeping Prophet', 'Concrete Prophet', 'Neurosplit Prophet', 'Dark Prophet', 'Prophetic', 'Dark Prophets', 'Prophet', 'Prophets on Vacation', 'Prophet Fulfilled', 'Blood of the Prophets', 'Prophets of War', 'Prophetic Disclosure', 'The Prophet', 'Aeternus Prophet', 'Disaster Prophet', 'Blasphemia Prophetica', 'Black Tar Prophet', 'Slaughter the Prophets', 'Doomsday Prophet', 'Pale Prophet', 'Prophets of the Rising Dead', 'Prophets of Saturn', "The Prophet's Whisper", 'Prophetic Scourge', 'Prophet of the Void', 'The Fallen Prophets', 'Prophetess', 'Silent Prophet', 'Feast for a Prophet'];
 
+        const bandList = new BandList(FIXTURE);
+        document.body.appendChild(bandList.el);
 
-        document.body.appendChild(BandList(FIXTURE));
+        let index = 0;
 
           const options = {
 
@@ -45,10 +56,14 @@ const FIXTURE = ['Steel Prophet', 'False Prophet', 'Prophets of Doom', 'Messiah 
               rate: 0.5, // slow it down!
 
               // Function that returns next lyric
-              lyrics: function () {
-                const words = FIXTURE;
-                return words[Math.floor(Math.random(1) * words.length)];
-              }
+              lyrics: (function () {
+                  let index = -1;
+                  return function () {
+                    const words = FIXTURE;
+                    index += 1;
+                    return words[index];
+                  }
+              }())
             },
 
             sample: {
@@ -63,6 +78,16 @@ const FIXTURE = ['Steel Prophet', 'False Prophet', 'Prophets of Doom', 'Messiah 
           };
 
           const composer = new BadSongComposer(options);
+
+          composer.on('vocalStart', () => {
+            bandList.highlightIndex(index);
+          });
+
+          composer.on('vocalComplete', () => {
+            bandList.clearHighlight();
+            index++;
+          });
+
           composer.play();
 
         </script>
