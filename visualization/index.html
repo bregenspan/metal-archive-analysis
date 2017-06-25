@@ -6,12 +6,10 @@
                 margin: 0;
                 padding: 0;
             }
-
             body {
                 background: #000;
                 color: #666;
             }
-
             .band-list {
                 font-size: 2em;
                 padding: 0;
@@ -31,5 +29,44 @@
     </head>
     <body>
         <script src="band-list.js"></script>
-    </body>
-</html>
+        <script src="./audio/bad-song-composer.js"></script>
+
+        <script>
+const FIXTURE = ['Steel Prophet', 'False Prophet', 'Prophets of Doom', 'Messiah Prophet', 'Prophetic Age', 'Black Prophets', 'Pontius Prophet', 'Prophet of Disasters', 'Prophet', 'Satanic Prophets', 'High Prophet', 'Inverted Prophet', 'Sturmprophet', 'Prophet', "Prophet's Eye", 'Weeping Prophet', 'False Prophet', 'Prophet', 'Sleeping Prophet', 'Concrete Prophet', 'Neurosplit Prophet', 'Dark Prophet', 'Prophetic', 'Dark Prophets', 'Prophet', 'Prophets on Vacation', 'Prophet Fulfilled', 'Blood of the Prophets', 'Prophets of War', 'Prophetic Disclosure', 'The Prophet', 'Aeternus Prophet', 'Disaster Prophet', 'Blasphemia Prophetica', 'Black Tar Prophet', 'Slaughter the Prophets', 'Doomsday Prophet', 'Pale Prophet', 'Prophets of the Rising Dead', 'Prophets of Saturn', "The Prophet's Whisper", 'Prophetic Scourge', 'Prophet of the Void', 'The Fallen Prophets', 'Prophetess', 'Silent Prophet', 'Feast for a Prophet'];
+
+
+        document.body.appendChild(BandList(FIXTURE));
+
+          const options = {
+
+            vocals: {
+              lang: 'en-', // prefix for matching Speech Synthesis voice languages
+              pitch: 2, // highest possible pitch
+              rate: 0.5, // slow it down!
+
+              // Function that returns next lyric
+              lyrics: function () {
+                const words = FIXTURE;
+                return words[Math.floor(Math.random(1) * words.length)];
+              }
+            },
+
+            sample: {
+              // Audio clip to repeat in between vocals. (We're making a very bad song here;
+              //  vocals only occur during breaks in between all other music)
+              src: 'audio/antagonist.mp3',
+
+              // Duration to play audio clip for, in ms
+              duration: 3400
+            }
+
+          };
+
+          const composer = new BadSongComposer(options);
+          composer.play();
+
+        </script>
+
+
+        </body>
+    </html>
