@@ -1,9 +1,9 @@
 import argparse
 from nltk import FreqDist
-from nltk.corpus import words
+from nltk.corpus import brown
 import sqlite3
 
-vocab = set(w.lower() for w in words.words())
+vocab = set(w.lower() for w in brown.words())
 DB_FILENAME = 'bands.db'
 
 
@@ -11,7 +11,14 @@ def get_rows():
     with sqlite3.connect(DB_FILENAME) as conn:
         conn.row_factory = sqlite3.Row  # dicts for rows
         cursor = conn.cursor()
-        for row in cursor.execute('SELECT * FROM bands'):
+        for row in cursor.execute('''
+            SELECT
+                *
+            FROM
+                bands
+            ORDER BY
+                `id` ASC
+        '''):
             yield row
 
 
@@ -36,23 +43,11 @@ def all_band_name_ngrams(min_len, max_len):
 
     ngrams = []
 
-    with sqlite3.connect(DB_FILENAME) as conn:
-        cursor = conn.cursor()
-        for row in get_rows():
-            normalized_name = row['name'].replace(' ', '').lower()
-            band_ngrams = all_ngrams_for_word(
-                normalized_name, min_len, max_len)
-            print([(row['id'], ngram,) for ngram in band_ngrams if ngram])
-            cursor.executemany(
-                '''
-                INSERT INTO
-                    `bands_ngrams` (band_id, ngram)
-                VALUES
-                    (?, ?)
-                ''',
-                [(row['id'], ngram,) for ngram in band_ngrams])
-
-            ngrams.extend(band_ngrams)
+    for row in get_rows():
+        normalized_name = row['name'].replace(' ', '').lower()
+        band_ngrams = all_ngrams_for_word(
+            normalized_name, min_len, max_len)
+        ngrams.extend(band_ngrams)
 
     return ngrams
 
@@ -68,19 +63,10 @@ if __name__ == "__main__":
     parser.add_argument('--max_total', default=50, type=int,
                         help='Maximum number of n-grams to output')
 
-    with sqlite3.connect(DB_FILENAME) as conn:
-        cur = conn.cursor()
-        cur.execute('DROP TABLE IF EXISTS `bands_ngrams`')
-        cur.execute('''CREATE TABLE `bands_ngrams` (
-                        band_id INTEGER,
-                        ngram CHAR(50)
-                    )''')
-
     args = parser.parse_args()
     all_ngrams = all_band_name_ngrams(
         min_len=args.min, max_len=args.max)
 
-    print([ng for ng in all_ngrams])
     f = FreqDist(all_ngrams)
     for (word, count,) in f.most_common(args.max_total):
         print("{} ({})".format(word, count))
