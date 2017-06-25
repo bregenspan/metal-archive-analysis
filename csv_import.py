@@ -19,6 +19,7 @@ with open(CSV_FILENAME, 'r') as csv_in:
                         id INTEGER PRIMARY KEY,
                         link TEXT,
                         name TEXT,
+                        normalized_name TEXT,
                         country TEXT,
                         genre TEXT,
                         status CHAR(50)
@@ -34,11 +35,13 @@ with open(CSV_FILENAME, 'r') as csv_in:
                 link = link_id_name.group(1)
                 id = link_id_name.group(2)
                 name = link_id_name.group(3)
+                normalized_name = name.replace(' ', '').lower()
 
                 cur.execute('''
                     INSERT INTO
                         `bands`
+                        (id, link, name, normalized_name, country, genre, status)
                     VALUES
-                        (?, ?, ?, ?, ?, ?)
-                    ''', (id, link, name, country, genre, status,))
+                        (?, ?, ?, ?, ?, ?, ?)
+                    ''', (id, link, name, normalized_name, country, genre, status,))
                         

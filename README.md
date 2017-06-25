@@ -16,6 +16,7 @@ key for each band), and creating a "bands" table with the fields:
  * id
  * link
  * name
+ * normalized_name (lowercased version of name with spaces removed, for search)
  * country
  * genre
  * status
@@ -24,4 +25,7 @@ key for each band), and creating a "bands" table with the fields:
 
 This builds a list of English word ngrams, of a specified range of lengths, found
 in the band names in the "bands" table. It outputs a list of most frequently-occurring
-ngrams and produces a `bands_ngrams` table.
+ngrams. 
+
+It also produces a `bands_ngrams` table mapping band IDs to ngrams. (NOTE: is this at
+all useful? Maybe can just use full-text search to achieve any meaningful result)
