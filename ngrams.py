@@ -22,6 +22,23 @@ def get_rows():
             yield row
 
 
+def get_bands(substring):
+    with sqlite3.connect(DB_FILENAME) as conn:
+        conn.row_factory = sqlite3.Row  # dicts for rows
+        cursor = conn.cursor()
+        for row in cursor.execute('''
+            SELECT
+                *
+            FROM
+                bands
+            WHERE
+                normalized_name LIKE ?
+            ORDER BY
+                `id` ASC
+        ''', ('%{}%'.format(substring),)):
+            yield row
+
+
 def ngrams(length, word):
     """Generate a sequence of `length`-sized English word substrings
         of `word`"""
@@ -69,4 +86,5 @@ if __name__ == "__main__":
 
     f = FreqDist(all_ngrams)
     for (word, count,) in f.most_common(args.max_total):
-        print("{} ({})".format(word, count))
+        bands = [band['name'] for band in get_bands(word)]
+        print("{} ({}) - {}".format(word, count, bands))
