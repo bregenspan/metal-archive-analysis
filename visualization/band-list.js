@@ -29,6 +29,11 @@ class BandList {
     });
   }
 
+  destroy () {
+    this.el.parentNode.removeChild(this.el);
+    this.el = null;
+  }
+
   highlightIndex (index) {
     this.clearHighlight();
     const newSelected = this.el.getElementsByTagName('li')[index];

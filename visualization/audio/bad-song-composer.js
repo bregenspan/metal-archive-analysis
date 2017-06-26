@@ -77,10 +77,31 @@ class BadSongComposer extends EventEmitter {
     this._isChrome = window.chrome && !window.isOpera;
   }
 
+  destroy () {
+    speechSynthesis.cancel();
+    if (this._utterance) {
+      this.removeUtteranceListener();
+      delete this._utterance;
+    }
+    this.audio.pause();
+    this.audio.parentNode.removeChild(this.audio);
+    this.off('vocalComplete');
+    this.off('vocalStart');
+  }
+
+  removeUtteranceListener () {
+    if (this.utterance._listener) {
+      this.utterance.removeEventListener('end', this.utterance._listener);
+      delete this.utterance._listener;
+    }
+  }
+
   speak () {
     const composer = this;
     const utterance = this.getUtterance();
     const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.indexOf(this.lang) === 0);
+
+    this.utterance = utterance;
 
     // FIXME: this should be configurable
     const goodVoices = voices.filter((v) => name === 'Google UK English Male');
@@ -91,10 +112,7 @@ class BadSongComposer extends EventEmitter {
     utterance.text = this.lyrics();
 
     return new Promise((resolve, reject) => {
-      if (utterance._listener) {
-        utterance.removeEventListener('end', utterance._listener);
-        delete utterance._listener;
-      }
+      composer.removeUtteranceListener();
       utterance._listener = () => {
         composer.emit('vocalComplete');
         resolve();
