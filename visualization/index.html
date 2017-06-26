@@ -12,16 +12,16 @@
             }
             .band-list-container {
                 height: 100vh;
-                overflow: hidden;
+                overflow: scroll;
             }
             .band-list {
                 font-size: 2em;
                 opacity: 0;
                 padding: 0;
-                transition: 2s opacity;
+                transition: 0.2s opacity;
             }
             .band-list.animate {
-                transition: 2s transform, 2s opacity;
+                transition: 2s transform, 0.2s opacity;
             }
             .band-list.visible {
                 opacity: 1;
@@ -130,19 +130,26 @@
             return data.json();
           })
           .then((data) => {
-            const word = data[0].word;
-            const bands = data[0].bands;
+
+            let index = 0;
+            const word = data[index].word;
+            const bands = data[index].bands;
   
+            document.addEventListener('keyup', (e) => {
+              if (e.code === 'ArrowRight') {
+                if (index < data.length - 2) {
+                  index += 1;
+                  showBandList(data[index].word, data[index].bands);
+                }
+              } else if (e.code === 'ArrowLeft') {
+                if (index > 0) {
+                  index -= 1;
+                  showBandList(data[index].word, data[index].bands);
+                }
+              }
+            });
+
             showBandList(word, bands);
-
-            window.setTimeout(() => {
-              showBandList(data[2].word, data[2].bands);
-            }, 1000);
-
-            window.setTimeout(() => {
-              showBandList(data[3].word, data[3].bands);
-            }, 3000);
-
           });
 
           </script>
