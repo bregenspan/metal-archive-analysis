@@ -1,4 +1,5 @@
 import argparse
+import json
 from nltk import FreqDist
 from nltk.corpus import brown
 import sqlite3
@@ -34,7 +35,7 @@ def get_bands(substring):
             WHERE
                 normalized_name LIKE ?
             ORDER BY
-                `id` ASC
+                `name` ASC
         ''', ('%{}%'.format(substring),)):
             yield row
 
@@ -85,6 +86,25 @@ if __name__ == "__main__":
         min_len=args.min, max_len=args.max)
 
     f = FreqDist(all_ngrams)
+    words = []
     for (word, count,) in f.most_common(args.max_total):
-        bands = [band['name'] for band in get_bands(word)]
-        print("{} ({}) - {}".format(word, count, bands))
+        bands = [band for band in get_bands(word)]
+        seen = set()
+        duplicate_names = set()
+        for name in [band['name'] for band in bands]:
+            if name in seen:
+                duplicate_names.add(name)
+            seen.add(name)
+
+        names = set([band['name'] for band in bands])
+        words.append({
+          'word': word,
+          'bands': [{
+            'name': band['name'],
+            'link': band['link'],
+            'country': band['country'],
+            'id': band['id'],
+            'dupe': True if band['name'] in duplicate_names else False
+          } for band in bands]
+        })
+    print(json.dumps(words))
