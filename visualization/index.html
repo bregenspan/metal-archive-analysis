@@ -12,7 +12,15 @@
             }
             .band-list {
                 font-size: 2em;
+                opacity: 0;
                 padding: 0;
+                transition: 2s opacity;
+            }
+            .band-list.animate {
+                transition: 2s transform, 2s opacity;
+            }
+            .band-list.visible {
+                opacity: 1;
             }
             .band-list li {
                 list-style: none;
@@ -45,6 +53,7 @@
 
         const bandList = new BandList(FIXTURE);
         document.body.appendChild(bandList.el);
+        bandList.onMounted();
 
         let index = 0;
 
@@ -53,7 +62,7 @@
             vocals: {
               lang: 'en-', // prefix for matching Speech Synthesis voice languages
               pitch: 2, // highest possible pitch
-              rate: 0.5, // slow it down!
+              rate: 1,
 
               // Function that returns next lyric
               lyrics: (function () {
