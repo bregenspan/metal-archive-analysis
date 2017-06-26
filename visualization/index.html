@@ -114,7 +114,7 @@
             currentComposer = composer;
 
             composer.on('vocalStart', () => {
-              bandList.highlightIndex(index);
+              bandList.setIndex(index);
             });
 
             composer.on('vocalComplete', () => {
@@ -136,16 +136,31 @@
             const bands = data[index].bands;
   
             document.addEventListener('keyup', (e) => {
-              if (e.code === 'ArrowRight') {
-                if (index < data.length - 2) {
-                  index += 1;
-                  showBandList(data[index].word, data[index].bands);
-                }
-              } else if (e.code === 'ArrowLeft') {
-                if (index > 0) {
-                  index -= 1;
-                  showBandList(data[index].word, data[index].bands);
-                }
+              switch (e.code) {
+                case 'ArrowRight':
+                  if (index < data.length - 2) {
+                    index += 1;
+                    showBandList(data[index].word, data[index].bands);
+                  }
+                  break;
+                case 'ArrowLeft':
+                  if (index > 0) {
+                    index -= 1;
+                    showBandList(data[index].word, data[index].bands);
+                  }
+                  break;
+                case 'ArrowUp':
+                case 'ArrowDown':
+                  if (currentComposer) {
+                    currentComposer.destroy();
+                    currentComposer = null;
+                  }
+                  if (e.code === 'ArrowDown') {
+                    currentBandList.next();
+                  } else {
+                    currentBandList.previous();
+                  }
+                  break;
               }
             });
 
