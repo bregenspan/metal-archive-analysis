@@ -10,6 +10,10 @@
                 background: #000;
                 color: #666;
             }
+            .band-list-container {
+                height: 100vh;
+                overflow: hidden;
+            }
             .band-list {
                 font-size: 2em;
                 opacity: 0;
@@ -49,6 +53,9 @@
         </style>
     </head>
     <body>
+
+        <div class="band-list-container"></div>
+
         <script src="band-list.js"></script>
         <script src="./lib/event-emitter.js"></script>
         <script src="./audio/bad-song-composer.js"></script>
@@ -63,7 +70,7 @@
             const bands = data[0].bands;
 
             const bandList = new BandList(bands, word);
-            document.body.appendChild(bandList.el);
+            document.querySelector('.band-list-container').appendChild(bandList.el);
 
             bandList.onMounted();
 

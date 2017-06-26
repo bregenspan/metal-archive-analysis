@@ -66,7 +66,7 @@ class BadSongComposer extends EventEmitter {
 
     const audio = new Audio();
     audio.src = options.sample.src;
-    audio.controls = true;
+    audio.controls = false;
     audio.autoplay = false;
     document.body.appendChild(audio);
     this.audio = audio;
@@ -102,7 +102,7 @@ class BadSongComposer extends EventEmitter {
       utterance.addEventListener('end', utterance._listener);
 
       this.emit('vocalStart');
-      
+
       speechSynthesis.speak(utterance);
     });
   }
