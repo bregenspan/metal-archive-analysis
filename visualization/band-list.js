@@ -18,6 +18,10 @@ class BandList {
       list.appendChild(el);
     });
 
+    list.addEventListener('focus', (e) => {
+      // TODO: Handle focus, e.g. via tab key, to skip forwards in list
+    }, true);
+
     this.el = list;
     this.index = 0;
   }
@@ -40,6 +44,7 @@ class BandList {
     const newSelected = this.el.getElementsByTagName('li')[index];
     if (newSelected) {
       newSelected.classList.add('selected');
+      newSelected.querySelector('a').focus();
       this.centerOn(newSelected, (index > this.index));
     }
     this.index = index;
