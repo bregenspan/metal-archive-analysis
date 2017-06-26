@@ -23,10 +23,15 @@
                 opacity: 1;
             }
             .band-list li {
+                transition: 0.5s color;
                 list-style: none;
                 margin: 1em 0 0;
                 text-align: center;
                 text-transform: uppercase;
+            }
+            .band-list li a {
+                color: inherit;
+                text-decoration: none;
             }
             .band-list li em {
                 color: #999;
@@ -49,57 +54,66 @@
         <script src="./audio/bad-song-composer.js"></script>
 
         <script>
-        const FIXTURE = ['Steel Prophet', 'False Prophet', 'Prophets of Doom', 'Messiah Prophet', 'Prophetic Age', 'Black Prophets', 'Pontius Prophet', 'Prophet of Disasters', 'Prophet', 'Satanic Prophets', 'High Prophet', 'Inverted Prophet', 'Sturmprophet', 'Prophet', "Prophet's Eye", 'Weeping Prophet', 'False Prophet', 'Prophet', 'Sleeping Prophet', 'Concrete Prophet', 'Neurosplit Prophet', 'Dark Prophet', 'Prophetic', 'Dark Prophets', 'Prophet', 'Prophets on Vacation', 'Prophet Fulfilled', 'Blood of the Prophets', 'Prophets of War', 'Prophetic Disclosure', 'The Prophet', 'Aeternus Prophet', 'Disaster Prophet', 'Blasphemia Prophetica', 'Black Tar Prophet', 'Slaughter the Prophets', 'Doomsday Prophet', 'Pale Prophet', 'Prophets of the Rising Dead', 'Prophets of Saturn', "The Prophet's Whisper", 'Prophetic Scourge', 'Prophet of the Void', 'The Fallen Prophets', 'Prophetess', 'Silent Prophet', 'Feast for a Prophet'];
+        window.fetch('ngrams.json')
+          .then((data) => {
+            return data.json();
+          })
+          .then((data) => {
+            const word = data[0].word;
+            const bands = data[0].bands;
 
-        const bandList = new BandList(FIXTURE);
-        document.body.appendChild(bandList.el);
-        bandList.onMounted();
+            const bandList = new BandList(bands, word);
+            document.body.appendChild(bandList.el);
 
-        let index = 0;
+            bandList.onMounted();
 
-          const options = {
+            let index = 0;
 
-            vocals: {
-              lang: 'en-', // prefix for matching Speech Synthesis voice languages
-              pitch: 2, // highest possible pitch
-              rate: 1,
+            const options = {
 
-              // Function that returns next lyric
-              lyrics: (function () {
-                  let index = -1;
-                  return function () {
-                    const words = FIXTURE;
-                    index += 1;
-                    return words[index];
-                  }
-              }())
-            },
+              vocals: {
+                lang: 'en-', // prefix for matching Speech Synthesis voice languages
+                pitch: 2, // highest possible pitch
+                rate: 1,
 
-            sample: {
-              // Audio clip to repeat in between vocals. (We're making a very bad song here;
-              //  vocals only occur during breaks in between all other music)
-              src: 'audio/antagonist.mp3',
+                // Function that returns next lyric
+                lyrics: (function () {
+                    let index = -1;
+                    return function () {
+                      const words = bands.map((band) => band.name);
+                      index += 1;
+                      return words[index];
+                    }
+                }())
+              },
 
-              // Duration to play audio clip for, in ms
-              duration: 3400
-            }
+              sample: {
+                // Audio clip to repeat in between vocals. (We're making a very bad song here;
+                //  vocals only occur during breaks in between all other music)
+                src: 'audio/antagonist.mp3',
 
-          };
+                // Duration to play audio clip for, in ms
+                duration: 3400
+              }
+            };
 
-          const composer = new BadSongComposer(options);
+            const composer = new BadSongComposer(options);
 
-          composer.on('vocalStart', () => {
-            bandList.highlightIndex(index);
+            composer.on('vocalStart', () => {
+              bandList.highlightIndex(index);
+            });
+
+            composer.on('vocalComplete', () => {
+              bandList.clearHighlight();
+              index++;
+            });
+
+            composer.play();
+
+
           });
 
-          composer.on('vocalComplete', () => {
-            bandList.clearHighlight();
-            index++;
-          });
-
-          composer.play();
-
-        </script>
+          </script>
 
 
         </body>

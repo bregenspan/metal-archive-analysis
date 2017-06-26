@@ -2,15 +2,19 @@
  * Band list component
  */
 class BandList {
-  constructor (bandList) {
-    const searchTerm = 'Prophet';
-    const highlightRegex = new RegExp(`(${searchTerm})`, 'i');
+  constructor (bandList, highlightWord) {
+    const highlightRegex = new RegExp(`(${highlightWord})`, 'i');
     const list = document.createElement('ul');
     list.className = 'band-list';
-    bandList.forEach((bandName) => {
+    bandList.forEach((band) => {
+      const bandName = band.name;
       const el = document.createElement('li');
       const highlightedBandName = bandName.replace(highlightRegex, '<em>$1</em>');
-      el.innerHTML = highlightedBandName;
+      const link = document.createElement('a');
+      link.href = band.link;
+      link.innerHTML = highlightedBandName;
+      link.target = '_blank';
+      el.appendChild(link);
       list.appendChild(el);
     });
 
