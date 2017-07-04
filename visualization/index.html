@@ -6,6 +6,12 @@
                 margin: 0;
                 padding: 0;
             }
+            #appContainer {
+                position: relative;
+                  width: 100vw;
+                    height: 100vh;
+                    overflow:hidden;
+            }
             body {
                 background: #000;
                 color: #666;
@@ -19,9 +25,17 @@
                 opacity: 0;
                 padding: 0;
                 transition: 0.2s opacity;
+                position: absolute;
+                width: 100%;
             }
             .band-list.animate {
-                transition: 2s transform, 0.2s opacity;
+                transition: 1.4s transform ease-in-out, 0.2s opacity;
+            }
+            .band-list.out-to-left {
+                transform: translateX(-100vw);
+            }
+            .band-list.out-to-right {
+                transform: translateX(100vw);
             }
             .band-list.visible {
                 opacity: 1;
@@ -63,121 +77,13 @@
     </head>
     <body>
 
-        <div class="band-list-container"></div>
+        <div id="appContainer"></div>
 
         <script src="band-list.js"></script>
         <script src="./lib/event-emitter.js"></script>
         <script src="./audio/bad-song-composer.js"></script>
 
-        <script>
-        let currentBandList;
-        let currentComposer;
-
-        function showBandList(word, bands) {
-
-            if (currentBandList) {
-              currentBandList.destroy();
-            }
-
-            if (currentComposer) {
-              currentComposer.destroy();
-            }
-
-            const bandList = new BandList(bands, word);
-            currentBandList = bandList;
-            document.querySelector('.band-list-container').appendChild(bandList.el);
-            bandList.onMounted();
-
-            let index = 0;
-
-            const options = {
-
-              vocals: {
-                lang: 'en-', // prefix for matching Speech Synthesis voice languages
-                pitch: 2, // highest possible pitch
-                rate: 1,
-
-                // Function that returns next lyric
-                lyrics: (function () {
-                    let index = -1;
-                    return function () {
-                      const words = bands.map((band) => band.name);
-                      index += 1;
-                      return words[index];
-                    }
-                }())
-              },
-
-              sample: {
-                // Audio clip to repeat in between vocals. (We're making a very bad song here;
-                //  vocals only occur during breaks in between all other music)
-                src: 'audio/antagonist.mp3',
-
-                // Duration to play audio clip for, in ms
-                duration: 3400
-              }
-            };
-
-            const composer = new BadSongComposer(options);
-
-            currentComposer = composer;
-
-            composer.on('vocalStart', () => {
-              bandList.setIndex(index);
-            });
-
-            composer.on('vocalComplete', () => {
-              bandList.clearHighlight();
-              index++;
-            });
-
-            composer.play();
-        }
-
-        window.fetch('ngrams.json')
-          .then((data) => {
-            return data.json();
-          })
-          .then((data) => {
-
-            let index = 0;
-            const word = data[index].word;
-            const bands = data[index].bands;
-  
-            document.addEventListener('keyup', (e) => {
-              switch (e.code) {
-                case 'ArrowRight':
-                  if (index < data.length - 2) {
-                    index += 1;
-                    showBandList(data[index].word, data[index].bands);
-                  }
-                  break;
-                case 'ArrowLeft':
-                  if (index > 0) {
-                    index -= 1;
-                    showBandList(data[index].word, data[index].bands);
-                  }
-                  break;
-                case 'ArrowUp':
-                case 'ArrowDown':
-                  if (currentComposer) {
-                    currentComposer.destroy();
-                    currentComposer = null;
-                  }
-                  if (e.code === 'ArrowDown') {
-                    currentBandList.next();
-                  } else {
-                    currentBandList.previous();
-                  }
-                  break;
-              }
-            });
-
-            showBandList(word, bands);
-          });
-
-          </script>
-
+        <script src="./main.js"></script>
 
         </body>
     </html>
