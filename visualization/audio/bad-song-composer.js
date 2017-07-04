@@ -1,3 +1,5 @@
+/* global EventEmitter */
+
 /**
  * Returns Promise for when the "playing" event occurs
  * for specified Audio element
@@ -83,8 +85,10 @@ class BadSongComposer extends EventEmitter {
       this.removeUtteranceListener();
       delete this._utterance;
     }
-    this.audio.pause();
-    this.audio.parentNode.removeChild(this.audio);
+    if (this.audio && this.audio.parentNode) {
+      this.audio.pause();
+      this.audio.parentNode.removeChild(this.audio);
+    }
     this.off('vocalComplete');
     this.off('vocalStart');
   }
