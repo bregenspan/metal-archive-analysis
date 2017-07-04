@@ -12,6 +12,9 @@ const state = {
 /**
  * Displays the specified band list (list of bands for specific word),
  * transitioning to it from any previously active band list if needed.
+ * @param {string} word - the common word substring in the list of bands
+ * @param {Array<Object>} bands - list of bands, with objects matching the format found in ngrams.json
+ * @param {Number} index
  */
 function showBandList (word, bands, index) {
   let previousBandList = currentBandList;
@@ -29,6 +32,13 @@ function showBandList (word, bands, index) {
   currentBandList.onMounted();
 }
 
+/**
+ * Transitions between active band lists
+ * @param {DOMElement} oldEl - element to transition from
+ * @param {DOMElement} newEl - element to transition to
+ * @param {boolean} direction - if true, direction is forwards (right); otherwise, backwards (left)
+ * @returns {Promise} promise that is resolved once transition ends
+ */
 function transition (oldEl, newEl, direction) {
   return new Promise((resolve, reject) => {
     window.requestAnimationFrame(() => {
@@ -47,6 +57,11 @@ function transition (oldEl, newEl, direction) {
   });
 }
 
+/**
+ * Instantiates a BandList and BadSongComposer for a given list of bands
+ * @param {string} word
+ * @param {Array<Object>} bands
+ */
 function createBandList (word, bands) {
   const bandList = new BandList(state, bands, word);
 
