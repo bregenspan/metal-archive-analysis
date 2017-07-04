@@ -6,12 +6,13 @@ export default class BandList {
     const highlightRegex = new RegExp(`(${highlightWord})`, 'i');
     const list = document.createElement('ul');
     list.className = 'band-list';
-    bandList.forEach((band) => {
+    bandList.forEach((band, index) => {
       const bandName = band.name;
       const el = document.createElement('li');
       const highlightedBandName = bandName.replace(highlightRegex, '<em>$1</em>');
       const link = document.createElement('a');
       link.href = band.link;
+      link.dataset.index = index;
       link.innerHTML = highlightedBandName;
       link.target = '_blank';
       el.appendChild(link);
@@ -19,7 +20,17 @@ export default class BandList {
     });
 
     list.addEventListener('focus', (e) => {
-      // TODO: Handle focus, e.g. via tab key, to skip forwards in list
+      if (!e.target || !e.target.dataset.index) {
+        return;
+      }
+
+      this.clearHighlight();
+
+      const index = parseInt(e.target.dataset.index, 10);
+
+      this.centerOn(e.target, (index > this.index));
+      e.target.classList.add('selected');
+      this.index = index; // FIXME: bubble up index change / use shared state
     }, true);
 
     this.el = list;
@@ -28,7 +39,7 @@ export default class BandList {
 
   onMounted () {
     this.offset = (window.innerHeight / 2) + this.el.firstChild.offsetHeight;
-    //this.el.style.transform = `translateY(${this.offset}px)`;
+    // this.el.style.transform = `translateY(${this.offset}px)`;
     window.setTimeout(() => {
       this.el.classList.add('animate', 'visible');
     });
@@ -40,21 +51,17 @@ export default class BandList {
   }
 
   setIndex (index) {
-    this.clearHighlight();
     const newSelected = this.el.getElementsByTagName('li')[index];
     if (newSelected) {
-      newSelected.classList.add('selected');
       newSelected.querySelector('a').focus();
-      this.centerOn(newSelected, (index > this.index));
     }
-    this.index = index;
   }
 
   centerOn (itemEl, forwards) {
     const style = window.getComputedStyle(itemEl);
     const height = parseInt(style.marginTop, 10) + parseInt(style.marginBottom, 10) + itemEl.offsetHeight;
     this.offset += (forwards ? (height * -1) : height);
-    //this.el.style.transform = `translateY(${this.offset}px)`;
+    // this.el.style.transform = `translateY(${this.offset}px)`;
   }
 
   next () {
