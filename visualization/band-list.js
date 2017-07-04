@@ -1,7 +1,7 @@
 /**
  * Band list component
  */
-class BandList {
+export default class BandList {
   constructor (bandList, highlightWord) {
     const highlightRegex = new RegExp(`(${highlightWord})`, 'i');
     const list = document.createElement('ul');

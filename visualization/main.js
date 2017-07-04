@@ -1,4 +1,5 @@
-/* global BandList, BadSongComposer */
+import BandList from './band-list.js';
+import BadSongComposer from './audio/bad-song-composer.js';
 
 let currentBandList;
 let currentComposer;

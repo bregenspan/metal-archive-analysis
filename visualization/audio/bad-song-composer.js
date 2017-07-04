@@ -1,4 +1,4 @@
-/* global EventEmitter */
+import EventEmitter from 'tiny-emitter';
 
 /**
  * Returns Promise for when the "playing" event occurs
@@ -33,7 +33,7 @@ function playAudioForDuration (audio, duration) {
         });
 }
 
-class BadSongComposer extends EventEmitter {
+export default class BadSongComposer extends EventEmitter {
   constructor (options) {
     super();
 
