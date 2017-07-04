@@ -28,7 +28,7 @@ class BandList {
 
   onMounted () {
     this.offset = (window.innerHeight / 2) + this.el.firstChild.offsetHeight;
-    this.el.style.transform = `translateY(${this.offset}px)`;
+    //this.el.style.transform = `translateY(${this.offset}px)`;
     window.setTimeout(() => {
       this.el.classList.add('animate', 'visible');
     });
@@ -54,7 +54,7 @@ class BandList {
     const style = window.getComputedStyle(itemEl);
     const height = parseInt(style.marginTop, 10) + parseInt(style.marginBottom, 10) + itemEl.offsetHeight;
     this.offset += (forwards ? (height * -1) : height);
-    this.el.style.transform = `translateY(${this.offset}px)`;
+    //this.el.style.transform = `translateY(${this.offset}px)`;
   }
 
   next () {
