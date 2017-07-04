@@ -2,7 +2,10 @@
  * Band list component
  */
 export default class BandList {
-  constructor (bandList, highlightWord) {
+  constructor (state, bandList, highlightWord) {
+
+    this.state = state;
+
     const highlightRegex = new RegExp(`(${highlightWord})`, 'i');
     const list = document.createElement('ul');
     list.className = 'band-list';
@@ -28,13 +31,12 @@ export default class BandList {
 
       const index = parseInt(e.target.dataset.index, 10);
 
-      this.centerOn(e.target, (index > this.index));
+      this.centerOn(e.target, (index > this.state.bandIndex));
       e.target.classList.add('selected');
-      this.index = index; // FIXME: bubble up index change / use shared state
+      this.state.bandIndex = index; // FIXME: bubble up index change / use shared state
     }, true);
 
     this.el = list;
-    this.index = 0;
   }
 
   onMounted () {
@@ -65,13 +67,12 @@ export default class BandList {
   }
 
   next () {
-    // TODO: check overflow
-    this.setIndex(this.index + 1);
+    this.setIndex(this.state.bandIndex + 1);
   }
 
   previous () {
-    if (this.index > 0) {
-      this.setIndex(this.index - 1);
+    if (this.state.bandIndex > 0) {
+      this.setIndex(this.state.bandIndex - 1);
     }
   }
 

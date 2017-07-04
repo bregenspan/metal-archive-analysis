@@ -5,6 +5,14 @@ let currentBandList;
 let currentComposer;
 const appContainer = document.getElementById('appContainer');
 
+const state = {
+  bandIndex: 0
+};
+
+/**
+ * Displays the specified band list (list of bands for specific word),
+ * transitioning to it from any previously active band list if needed.
+ */
 function showBandList (word, bands, index) {
   let previousBandList = currentBandList;
 
@@ -40,9 +48,7 @@ function transition (oldEl, newEl, direction) {
 }
 
 function createBandList (word, bands) {
-  const bandList = new BandList(bands, word);
-
-  let bandIndex = 0;
+  const bandList = new BandList(state, bands, word);
 
   const options = {
 
@@ -52,14 +58,9 @@ function createBandList (word, bands) {
       rate: 1,
 
       // Function that returns next lyric
-      lyrics: (function () {
-        let index = -1;
-        return function () {
-          const words = bands.map((band) => band.name);
-          index += 1;
-          return words[index];
-        };
-      }())
+      lyrics: function () {
+        return bands[state.bandIndex].name;
+      }
     },
 
     sample: {
@@ -81,12 +82,12 @@ function createBandList (word, bands) {
   currentComposer = composer;
 
   composer.on('vocalStart', () => {
-    bandList.setIndex(bandIndex);
+    bandList.setIndex(state.bandIndex);
   });
 
   composer.on('vocalComplete', () => {
     bandList.clearHighlight();
-    bandIndex++;
+    state.bandIndex++;
   });
 
   composer.play();
