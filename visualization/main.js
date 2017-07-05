@@ -23,13 +23,16 @@ function showBandList (word, bands, index) {
     currentBandList = createBandList(word, bands);
     currentBandList._index = index;
     transition(previousBandList.el, currentBandList.el, previousBandList._index < currentBandList._index)
-      .then(() => previousBandList.destroy());
+      .then(() => {
+        previousBandList.destroy();
+        currentBandList.onMounted();
+      });
   } else {
     currentBandList = createBandList(word, bands);
     currentBandList._index = index;
     appContainer.appendChild(currentBandList.el);
+    currentBandList.onMounted();
   }
-  currentBandList.onMounted();
 }
 
 /**
@@ -47,9 +50,12 @@ function transition (oldEl, newEl, direction) {
       window.requestAnimationFrame(() => {
         oldEl.classList.add(direction ? 'out-to-left' : 'out-to-right');
         newEl.classList.remove(direction ? 'out-to-right' : 'out-to-left');
-        const handler = () => {
-          resolve();
+        const handler = (e) => {
+          if (!e.target.classList.contains('band-list')) {
+            return true;
+          }
           oldEl.removeEventListener('transitionend', handler);
+          resolve();
         };
         oldEl.addEventListener('transitionend', handler);
       });
@@ -124,12 +130,14 @@ window.fetch('ngrams.json')
         case 'ArrowRight':
           if (wordIndex < data.length - 2) {
             wordIndex += 1;
+            state.bandIndex = 0;
             showBandList(data[wordIndex].word, data[wordIndex].bands, wordIndex);
           }
           break;
         case 'ArrowLeft':
           if (wordIndex > 0) {
             wordIndex -= 1;
+            state.bandIndex = 0;
             showBandList(data[wordIndex].word, data[wordIndex].bands, wordIndex);
           }
           break;

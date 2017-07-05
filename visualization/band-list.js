@@ -33,7 +33,7 @@ export default class BandList {
 
       this.centerOn(e.target, (index > this.state.bandIndex));
       e.target.classList.add('selected');
-      this.state.bandIndex = index; // FIXME: bubble up index change / use shared state
+      this.state.bandIndex = index;
     }, true);
 
     this.el = list;
@@ -42,9 +42,10 @@ export default class BandList {
   onMounted () {
     this.offset = (window.innerHeight / 2) + this.el.firstChild.offsetHeight;
     // this.el.style.transform = `translateY(${this.offset}px)`;
-    window.setTimeout(() => {
-      this.el.classList.add('animate', 'visible');
-    });
+    //window.setTimeout(() => {
+     // this.el.classList.add('animate', 'visible');
+    //});
+    this.setIndex(0);
   }
 
   destroy () {

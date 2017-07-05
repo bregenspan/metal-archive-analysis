@@ -8,9 +8,16 @@
             }
             #appContainer {
                 position: relative;
-                  width: 100vw;
-                    height: 100vh;
-                    overflow:hidden;
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
+            }
+            #appContainer.animate {
+                opacity: 0;
+                transition: 0.2s opacity;
+            }
+            #appContainer.visible {
+                opacity: 1;
             }
             body {
                 background: #000;
@@ -22,23 +29,16 @@
             }
             .band-list {
                 font-size: 2em;
-                opacity: 0;
                 padding: 0;
-                transition: 0.2s opacity;
                 position: absolute;
                 width: 100%;
-            }
-            .band-list.animate {
-                transition: 1.4s transform ease-in-out, 0.2s opacity;
+                transition: 1.4s transform ease-in-out;
             }
             .band-list.out-to-left {
                 transform: translateX(-100vw);
             }
             .band-list.out-to-right {
                 transform: translateX(100vw);
-            }
-            .band-list.visible {
-                opacity: 1;
             }
             .band-list li {
                 transition: 0.5s color;
