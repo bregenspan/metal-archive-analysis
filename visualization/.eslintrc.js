@@ -1,3 +1,7 @@
+/**
+ * Standard.js + extra strictness and semicolons
+ */
+
 module.exports = {
     "root": true,
     "env": {
@@ -12,7 +16,8 @@ module.exports = {
         "standard",
         "promise"
     ],
-    "rules": {  // Look, I'm fine going "Standard" to a point, but...
-        "semi": ["error", "always"]
+    "rules": {
+        "semi": ["error", "always"],
+        "no-var": "error"
     }
 }
