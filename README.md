@@ -68,7 +68,7 @@ Example:
         "dupe": false
     },
     …
-},
+]},
     …
 ]
 ```
