@@ -1,5 +1,6 @@
-var path = require('path');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const process = require('process');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: path.resolve(__dirname, 'main.js'),
@@ -24,6 +25,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
+      hash: process.env.NODE_ENV === 'production',
       template: 'index.html'
     })
   ]
