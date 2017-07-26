@@ -1,6 +1,0 @@
-dist
-node_modules
-*.sw*
-*.db
-.data
-.DS_Store
