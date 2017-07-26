@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+            }
+            #appContainer {
+                position: relative;
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
+            }
+            #appContainer.animate {
+                opacity: 0;
+                transition: 0.2s opacity;
+            }
+            #appContainer.visible {
+                opacity: 1;
+            }
+            body {
+                background: #000;
+                color: #666;
+            }
+            .band-list-container {
+                height: 100vh;
+                overflow: scroll;
+            }
+            .band-list {
+                font-size: 2em;
+                padding: 0;
+                position: absolute;
+                width: 100%;
+                transition: 1.4s transform ease-in-out;
+            }
+            .band-list.out-to-left {
+                transform: translateX(-100vw);
+            }
+            .band-list.out-to-right {
+                transform: translateX(100vw);
+            }
+            .band-list li {
+                transition: 0.5s color;
+                list-style: none;
+                margin: 1em 0 0;
+                text-align: center;
+                text-transform: uppercase;
+            }
+            .band-list li a {
+                color: inherit;
+                text-decoration: none;
+                border-bottom: 4px #000 solid;
+                transition: 1s border;
+                //position: relative;
+                //display: inline-block;
+            }
+            .band-list li a:focus {
+                outline: none;
+                border-bottom: 4px #966 solid;
+            }
+
+            .band-list li em {
+                color: #999;
+                font-style: normal;
+                font-weight: bold;
+            }
+
+            .band-list .selected {
+                color: #966;
+            }
+
+            .band-list li.selected em {
+                color: #944;
+            }
+        </style>
+    </head>
+    <body>
+
+      <div id="appContainer"></div>
+
+    <script type="text/javascript" src="bundle.js"></script></body>
+</html>
