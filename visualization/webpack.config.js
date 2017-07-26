@@ -1,4 +1,5 @@
 var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: path.resolve(__dirname, 'main.js'),
@@ -17,7 +18,13 @@ module.exports = {
             presets: ['env']
           }
         }
-      }
+      },
+      { test: /\.(json|mp3)$/, use: 'file-loader' }
     ]
-  }
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'index.html'
+    })
+  ]
 };
