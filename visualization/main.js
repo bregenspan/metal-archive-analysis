@@ -87,7 +87,7 @@ function createBandList (word, bands) {
     sample: {
       // Audio clip to repeat in between vocals. (We're making a very bad song here;
       //  vocals only occur during breaks in between all other music)
-      src: 'audio/antagonist.mp3',
+      src: 'static/riff.mp3',
 
       // Duration to play audio clip for, in ms
       duration: 3400
@@ -116,7 +116,7 @@ function createBandList (word, bands) {
   return bandList;
 }
 
-window.fetch('ngrams.json')
+window.fetch('static/ngrams.json')
   .then((data) => {
     return data.json();
   })
