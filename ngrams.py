@@ -1,15 +1,26 @@
+"""
+Generates JSON containing ngrams found in band names (see README.md and --help output for usage details).
+
+I used Mathias Ettinger's nice example [here](https://codereview.stackexchange.com/a/105990) as a starting point for
+the ngram generation approach.
+"""
+
 import argparse
 import json
 from nltk import FreqDist
 from nltk.corpus import brown
+import os
 import sqlite3
 
 vocab = set(w.lower() for w in brown.words())
-DB_FILENAME = 'bands.db'
+
+DATA_FOLDER = '.data'
+DB_FILE = 'bands.db'
+db_path = os.path.join(DATA_FOLDER, DB_FILE)
 
 
 def get_rows():
-    with sqlite3.connect(DB_FILENAME) as conn:
+    with sqlite3.connect(db_path) as conn:
         conn.row_factory = sqlite3.Row  # dicts for rows
         cursor = conn.cursor()
         for row in cursor.execute('''
@@ -24,7 +35,7 @@ def get_rows():
 
 
 def get_bands(substring):
-    with sqlite3.connect(DB_FILENAME) as conn:
+    with sqlite3.connect(db_path) as conn:
         conn.row_factory = sqlite3.Row  # dicts for rows
         cursor = conn.cursor()
         for row in cursor.execute('''
@@ -43,7 +54,6 @@ def get_bands(substring):
 def ngrams(length, word):
     """Generate a sequence of `length`-sized English word substrings
         of `word`"""
-
     for i in range(len(word) - (length - 1)):
         if word[i:i + length] in vocab:
             yield word[i:i + length]
@@ -72,7 +82,7 @@ def all_band_name_ngrams(min_len, max_len):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description=('Print n-grams from metal-archives.com scraped CSV, '
+        description=('Print n-grams from band names in band database, '
                      'sorted by count'))
     parser.add_argument('--min', default=7, type=int,
                         help='Minimum length of n-grams to search for')
@@ -107,4 +117,4 @@ if __name__ == "__main__":
             'dupe': True if band['name'] in duplicate_names else False
           } for band in bands]
         })
-    print(json.dumps(words))
+    print(json.dumps(words, indent=2))

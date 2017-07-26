@@ -1,16 +1,35 @@
+"""
+This imports a CSV of data retrieved from metal-archives.com band listing AJAX requests
+into SQLite, extracting some further details from the HTML in the CSV (including metal-archives'
+primary key for each band), and creating a "bands" table with the fields:
+
+ * id
+ * link
+ * name
+ * normalized_name (lowercased version of name with spaces removed, for search)
+ * country
+ * genre
+ * status
+"""
+
+import argparse
 import csv
 import sqlite3
 import re
+import os
 
-"""
-Imports CSV of band data scraped from metal-archives.com
-to SQLite database.
-"""
+parser = argparse.ArgumentParser(
+        description='Import CSV of data scraped from metal-archives.com to SQLite database')
+parser.add_argument('input_file', help='Path to the CSV file to import')
+args = parser.parse_args()
 
-CSV_FILENAME = 'MA-band-names_2017-06-09.csv'
-DB_FILENAME = 'bands.db'
+DATA_PATH = '.data'
+DB_FILE = 'bands.db'
 
-with open(CSV_FILENAME, 'r') as csv_in:
+csv_filename = args.input_file
+DB_FILENAME = os.path.join(DATA_PATH, DB_FILE)
+
+with open(csv_filename, 'r') as csv_in:
     with sqlite3.connect(DB_FILENAME) as conn:
         reader = csv.reader(csv_in)
         cur = conn.cursor()
@@ -28,7 +47,8 @@ with open(CSV_FILENAME, 'r') as csv_in:
         for row in reader:
             (i, link, country, genre, status,) = row
 
-            status =  re.sub('<.*?>', '', status) # clean out HTML tags from Status field
+            # Clean out HTML tags from status field
+            status = re.sub('<.*?>', '', status)
 
             link_id_name = re.search('<a href=\'(.*\/(\d+))\'>(.*)</a>', link)
             if link_id_name is not None:
@@ -44,4 +64,3 @@ with open(CSV_FILENAME, 'r') as csv_in:
                     VALUES
                         (?, ?, ?, ?, ?, ?, ?)
                     ''', (id, link, name, normalized_name, country, genre, status,))
-                        
