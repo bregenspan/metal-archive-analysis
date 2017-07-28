@@ -108,14 +108,18 @@ if __name__ == "__main__":
             seen.add(name)
 
         names = set([band["name"] for band in bands])
+
+        band_data_for_word = [{
+            "name": band["name"],
+            "id": band["id"]
+        } for band in bands]
+
+        for band in band_data_for_word:
+            if band["name"] in duplicate_names:
+                band["dupe"] = True
+
         words.append({
           "word": word,
-          "bands": [{
-            "name": band["name"],
-            "link": band["link"],
-            "country": band["country"],
-            "id": band["id"],
-            "dupe": True if band["name"] in duplicate_names else False
-          } for band in bands]
+          "bands": band_data_for_word
         })
     print(json.dumps(words, indent=2))

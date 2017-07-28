@@ -1,9 +1,13 @@
+function linkifyBand (name, id) {
+  const urlSlug = escape(name.replace(/ /g, '_'));
+  return `https://www.metal-archives.com/bands/${urlSlug}/${id}`;
+}
+
 /**
  * Band list component
  */
 export default class BandList {
   constructor (state, bandList, highlightWord) {
-
     this.state = state;
 
     const highlightRegex = new RegExp(`(${highlightWord})`, 'i');
@@ -14,7 +18,7 @@ export default class BandList {
       const el = document.createElement('li');
       const highlightedBandName = bandName.replace(highlightRegex, '<em>$1</em>');
       const link = document.createElement('a');
-      link.href = band.link;
+      link.href = linkifyBand(band.name, band.id);
       link.dataset.index = index;
       link.innerHTML = highlightedBandName;
       link.target = '_blank';
@@ -42,9 +46,9 @@ export default class BandList {
   onMounted () {
     this.offset = (window.innerHeight / 2) + this.el.firstChild.offsetHeight;
     // this.el.style.transform = `translateY(${this.offset}px)`;
-    //window.setTimeout(() => {
-     // this.el.classList.add('animate', 'visible');
-    //});
+    // window.setTimeout(() => {
+    //   this.el.classList.add('animate', 'visible');
+    // });
     this.setIndex(0);
   }
 
