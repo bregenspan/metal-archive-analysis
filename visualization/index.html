@@ -31,7 +31,7 @@
                 padding: 0;
                 position: absolute;
                 text-align: center;
-                transition: 1.4s transform ease-in-out;
+                transition: 1s transform ease-in-out;
                 width: 100%;
             }
             .band-list.out-to-left {
@@ -75,11 +75,52 @@
             .band-list li.selected em {
                 color: #944;
             }
-        </style>
-    </head>
-    <body>
 
-      <div id="appContainer"></div>
+            .active-label {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                /* right: 0; */
+                /* bottom: 0; */
+                /* height: 50px; */
+                /* width: 100px; */
+                background: #000;
+                border: 3px #333 double;
+                text-align: center;
+                /* display: flex; */
+                /* align-items: center; */
+                /* justify-content: center; */
+                text-transform: uppercase;
+                padding: 10px 20px;
+                font-size: 40px;
+                margin: auto;
+                /* display: inline-block; */
+                /* height: 0; */
+                /* width: 0; */
+                transform: translate(-50%, -50%);
+                color: #999;
+                box-shadow: 0 0 0 2px #000;
+                z-index: 10;
+            }
 
-    </body>
-</html>
+            .active-label .count {
+                display: block;
+                font-size: 0.4em;
+                font-weight: 100;
+                /* opacity: 0.4; */
+                color: #666;
+                position: absolute;
+                background: #000;
+                border: 3px #333 double;
+                padding: 4px 8px;
+                right: -24px;
+                bottom: -23px;
+            }
+                      </style>
+                  </head>
+                  <body>
+
+                    <div id="appContainer"></div>
+
+                  </body>
+              </html>

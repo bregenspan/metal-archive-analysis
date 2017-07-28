@@ -3,6 +3,8 @@ import BadSongComposer from './audio/bad-song-composer.js';
 
 let currentBandList;
 let currentComposer;
+let currentLabel;
+
 const appContainer = document.getElementById('appContainer');
 
 const state = {
@@ -19,6 +21,18 @@ const state = {
 function showBandList (word, bands, index) {
   let previousBandList = currentBandList;
 
+  if (!currentLabel) {
+    currentLabel = document.createElement('div');
+    currentLabel.className = 'active-label';
+    appContainer.appendChild(currentLabel);
+    currentLabel.innerHTML = `
+      <span class="word"></span>
+      <span class="count"></span>
+    `;
+  }
+  currentLabel.querySelector('.word').innerHTML = word;
+  currentLabel.querySelector('.count').innerHTML = `${bands.length} bands`;
+  
   if (previousBandList) {
     currentBandList = createBandList(word, bands);
     currentBandList._index = index;
@@ -110,7 +124,8 @@ function createBandList (word, bands) {
     state.bandIndex++;
   });
 
-  composer.play();
+  // Disabled for now until if/when it can be made less annoying!
+  // composer.play();
 
   return bandList;
 }
