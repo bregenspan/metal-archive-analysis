@@ -23,22 +23,28 @@ function showBandList (word, bands, index) {
 
   if (!currentLabel) {
     currentLabel = document.createElement('div');
-    currentLabel.className = 'active-label';
+    currentLabel.className = 'active-label hide';
     appContainer.appendChild(currentLabel);
     currentLabel.innerHTML = `
       <span class="word"></span>
       <span class="count"></span>
     `;
   }
-  currentLabel.querySelector('.word').innerHTML = word;
-  currentLabel.querySelector('.count').innerHTML = `${bands.length} bands`;
-  
+
+  function updateLabel() {
+    currentLabel.querySelector('.word').innerHTML = word;
+    currentLabel.querySelector('.count').innerHTML = `${bands.length} bands`;
+    currentLabel.classList.remove('hide');
+  }
+
   if (previousBandList) {
     currentBandList = createBandList(word, bands);
     currentBandList._index = index;
+    currentLabel.classList.add('hide');
     transition(previousBandList.el, currentBandList.el, previousBandList._index < currentBandList._index)
       .then(() => {
         previousBandList.destroy();
+        updateLabel();
         currentBandList.onMounted();
       });
   } else {
@@ -46,6 +52,7 @@ function showBandList (word, bands, index) {
     currentBandList._index = index;
     appContainer.appendChild(currentBandList.el);
     currentBandList.onMounted();
+    updateLabel();
   }
 }
 
