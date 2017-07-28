@@ -14,8 +14,8 @@ from tokenize_inward import tokenize_inward
 
 vocab = set(w.lower() for w in brown.words())
 
-DATA_FOLDER = '.data'
-DB_FILE = 'bands.db'
+DATA_FOLDER = ".data"
+DB_FILE = "bands.db"
 db_path = os.path.join(DATA_FOLDER, DB_FILE)
 
 
@@ -23,14 +23,14 @@ def get_rows():
     with sqlite3.connect(db_path) as conn:
         conn.row_factory = sqlite3.Row  # dicts for rows
         cursor = conn.cursor()
-        for row in cursor.execute('''
+        for row in cursor.execute("""
             SELECT
                 *
             FROM
                 bands
             ORDER BY
                 `id` ASC
-        '''):
+        """):
             yield row
 
 
@@ -38,7 +38,7 @@ def get_bands(substring):
     with sqlite3.connect(db_path) as conn:
         conn.row_factory = sqlite3.Row  # dicts for rows
         cursor = conn.cursor()
-        for row in cursor.execute('''
+        for row in cursor.execute("""
             SELECT
                 *
             FROM
@@ -47,7 +47,7 @@ def get_bands(substring):
                 normalized_name LIKE ?
             ORDER BY
                 `name` ASC
-        ''', ('%{}%'.format(substring),)):
+        """, ("%{}%".format(substring),)):
             yield row
 
 
@@ -69,14 +69,14 @@ def all_band_name_ngrams(min_len, max_len):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description=('Print n-grams from band names in band database, '
-                     'sorted by count'))
-    parser.add_argument('--min', default=7, type=int,
-                        help='Minimum length of n-grams to search for')
-    parser.add_argument('--max', default=14, type=int,
-                        help='Maximum length of n-grams to search for')
-    parser.add_argument('--max_total', default=50, type=int,
-                        help='Maximum number of n-grams to output')
+        description=("Print n-grams from band names in band database, "
+                     "sorted by count"))
+    parser.add_argument("--min", default=7, type=int,
+                        help="Minimum length of n-grams to search for")
+    parser.add_argument("--max", default=14, type=int,
+                        help="Maximum length of n-grams to search for")
+    parser.add_argument("--max_total", default=50, type=int,
+                        help="Maximum number of n-grams to output")
 
     args = parser.parse_args()
     all_ngrams = all_band_name_ngrams(
@@ -88,20 +88,20 @@ if __name__ == "__main__":
         bands = [band for band in get_bands(word)]
         seen = set()
         duplicate_names = set()
-        for name in [band['name'] for band in bands]:
+        for name in [band["name"] for band in bands]:
             if name in seen:
                 duplicate_names.add(name)
             seen.add(name)
 
-        names = set([band['name'] for band in bands])
+        names = set([band["name"] for band in bands])
         words.append({
-          'word': word,
-          'bands': [{
-            'name': band['name'],
-            'link': band['link'],
-            'country': band['country'],
-            'id': band['id'],
-            'dupe': True if band['name'] in duplicate_names else False
+          "word": word,
+          "bands": [{
+            "name": band["name"],
+            "link": band["link"],
+            "country": band["country"],
+            "id": band["id"],
+            "dupe": True if band["name"] in duplicate_names else False
           } for band in bands]
         })
     print(json.dumps(words, indent=2))
