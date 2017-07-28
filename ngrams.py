@@ -18,6 +18,18 @@ DATA_FOLDER = ".data"
 DB_FILE = "bands.db"
 db_path = os.path.join(DATA_FOLDER, DB_FILE)
 
+# Disallowed word suffixes.
+# There are many words like "Damnation" in band names; the suffix "nation" is not
+# a meaningful word in this context.
+DISALLOW_AS_SUFFIX = {"nation", "ration", "lack"}
+
+
+def is_disallowed(word: str) -> bool:
+    for disallowed_suffix in DISALLOW_AS_SUFFIX:
+        if word.endswith(disallowed_suffix) and word != disallowed_suffix:
+            return True
+    return False
+
 
 def get_rows():
     with sqlite3.connect(db_path) as conn:
@@ -61,6 +73,7 @@ def all_band_name_ngrams(min_len, max_len):
         whitespace_tokenized_name = row["name"].lower().split()
         band_ngrams = chain.from_iterable([
             tokenize_inward(word, vocab) for word in whitespace_tokenized_name
+            if not is_disallowed(word)
         ])
         ngrams.extend([ngram for ngram in band_ngrams if len(ngram) >= min_len and len(ngram) <= max_len])
 
