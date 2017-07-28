@@ -21,10 +21,11 @@ db_path = os.path.join(DATA_FOLDER, DB_FILE)
 # Disallowed word suffixes.
 # There are many words like "Damnation" in band names; the suffix "nation" is not
 # a meaningful word in this context.
-DISALLOW_AS_SUFFIX = {"nation", "ration", "lack"}
+DISALLOW_AS_SUFFIX = {"nation", "ration", "lack", "less"}
 
 
 def is_disallowed(word: str) -> bool:
+    """ Tests for whether the specified word should be filtered out (based on it having a prohibited suffix) """
     for disallowed_suffix in DISALLOW_AS_SUFFIX:
         if word.endswith(disallowed_suffix) and word != disallowed_suffix:
             return True
