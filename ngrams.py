@@ -1,16 +1,16 @@
 """
 Generates JSON containing ngrams found in band names (see README.md and --help output for usage details).
-
-I used Mathias Ettinger's nice example [here](https://codereview.stackexchange.com/a/105990) as a starting point for
-the ngram generation approach.
 """
 
 import argparse
+from itertools import chain
 import json
 from nltk import FreqDist
 from nltk.corpus import brown
 import os
 import sqlite3
+
+from tokenize_inward import tokenize_inward
 
 vocab = set(w.lower() for w in brown.words())
 
@@ -51,20 +51,6 @@ def get_bands(substring):
             yield row
 
 
-def ngrams(length, word):
-    """Generate a sequence of `length`-sized English word substrings
-        of `word`"""
-    for i in range(len(word) - (length - 1)):
-        if word[i:i + length] in vocab:
-            yield word[i:i + length]
-
-
-def all_ngrams_for_word(word, min_len, max_len):
-    return [ngram
-            for size in range(min_len, max_len + 1)
-            for ngram in ngrams(size, word)]
-
-
 def all_band_name_ngrams(min_len, max_len):
     """Generates list of all English word ngrams between `min_len` and
         `max_len` found in the band name list"""
@@ -72,10 +58,11 @@ def all_band_name_ngrams(min_len, max_len):
     ngrams = []
 
     for row in get_rows():
-        normalized_name = row['name'].replace(' ', '').lower()
-        band_ngrams = all_ngrams_for_word(
-            normalized_name, min_len, max_len)
-        ngrams.extend(band_ngrams)
+        whitespace_tokenized_name = row["name"].lower().split()
+        band_ngrams = chain.from_iterable([
+            tokenize_inward(word, vocab) for word in whitespace_tokenized_name
+        ])
+        ngrams.extend([ngram for ngram in band_ngrams if len(ngram) >= min_len and len(ngram) <= max_len])
 
     return ngrams
 
