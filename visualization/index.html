@@ -10,7 +10,6 @@
                 position: relative;
                 width: 100vw;
                 height: 100vh;
-                overflow: hidden;
             }
             #appContainer.animate {
                 opacity: 0;
@@ -31,14 +30,15 @@
                 font-size: 0;
                 padding: 0;
                 position: absolute;
-                width: 100%;
+                text-align: center;
                 transition: 1.4s transform ease-in-out;
+                width: 100%;
             }
             .band-list.out-to-left {
-                transform: translateX(-100vw);
+                transform: translateZ(0) translateX(-100vw);
             }
             .band-list.out-to-right {
-                transform: translateX(100vw);
+                transform: translateZ(0) translateX(100vw);
             }
             .band-list li {
               font-size: 0.5rem;
