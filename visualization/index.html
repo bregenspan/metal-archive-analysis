@@ -10,7 +10,6 @@
                 position: relative;
                 width: 100vw;
                 height: 100vh;
-                overflow: hidden;
             }
             #appContainer.animate {
                 opacity: 0;
@@ -28,24 +27,27 @@
                 overflow: scroll;
             }
             .band-list {
-                font-size: 2em;
+                font-size: 0;
                 padding: 0;
                 position: absolute;
+                text-align: center;
+                transition: 1s transform ease-in-out;
                 width: 100%;
-                transition: 1.4s transform ease-in-out;
             }
             .band-list.out-to-left {
-                transform: translateX(-100vw);
+                transform: translateZ(0) translateX(-100vw);
             }
             .band-list.out-to-right {
-                transform: translateX(100vw);
+                transform: translateZ(0) translateX(100vw);
             }
             .band-list li {
+              font-size: 0.5rem;
                 transition: 0.5s color;
                 list-style: none;
-                margin: 1em 0 0;
+                margin: 0.5rem;
                 text-align: center;
                 text-transform: uppercase;
+                  display: inline-block;
             }
             .band-list li a {
                 color: inherit;
@@ -73,11 +75,59 @@
             .band-list li.selected em {
                 color: #944;
             }
-        </style>
-    </head>
-    <body>
 
-      <div id="appContainer"></div>
+            .active-label {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                /* right: 0; */
+                /* bottom: 0; */
+                /* height: 50px; */
+                /* width: 100px; */
+                background: #000;
+                border: 3px #333 double;
+                text-align: center;
+                /* display: flex; */
+                /* align-items: center; */
+                /* justify-content: center; */
+                text-transform: uppercase;
+                padding: 10px 20px;
+                font-size: 40px;
+                margin: auto;
+                /* display: inline-block; */
+                /* height: 0; */
+                /* width: 0; */
+                transform: translate(-50%, -50%);
+                color: #999;
+                box-shadow: 0 0 0 2px #000;
+                z-index: 10;
+                opacity: 1;
+                transition: 0.4s opacity;
+            }
 
-    <script type="text/javascript" src="bundle.js"></script></body>
-</html>
+            .active-label .count {
+                display: block;
+                font-size: 0.4em;
+                font-weight: 100;
+                /* opacity: 0.4; */
+                color: #666;
+                position: absolute;
+                background: #000;
+                border: 3px #333 double;
+                padding: 4px 8px;
+                right: -24px;
+                bottom: -23px;
+            }
+
+            .hide {
+              opacity: 0;
+            }
+
+                      </style>
+                  </head>
+                  <body>
+
+                    <div id="appContainer"></div>
+
+                  <script type="text/javascript" src="bundle.js?b02edfe3b000683168c5"></script></body>
+              </html>
