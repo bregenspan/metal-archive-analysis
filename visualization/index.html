@@ -2,20 +2,25 @@
 <html>
     <head>
         <style>
+            * {
+              box-sizing: border-box;
+            }
             html, body {
                 margin: 0;
                 padding: 0;
             }
-            #appContainer {
+            .visualization-fullscreen {
                 position: relative;
                 width: 100vw;
                 height: 100vh;
+                font-size: 12px;
+                overflow: hidden;
             }
-            #appContainer.animate {
+            .visualization-fullscreen.animate {
                 opacity: 0;
                 transition: 0.2s opacity;
             }
-            #appContainer.visible {
+            .visualization-fullscreen.visible {
                 opacity: 1;
             }
             body {
@@ -27,12 +32,16 @@
                 overflow: scroll;
             }
             .band-list {
-                font-size: 0;
-                padding: 0;
-                position: absolute;
-                text-align: center;
-                transition: 1s transform ease-in-out;
-                width: 100%;
+              justify-content: center;
+              margin-top: 0;
+              padding: 0;
+              position: absolute;
+              text-align: center;
+              transition: 1s transform ease-in-out;
+              display: flex;
+              flex-direction: row;
+              flex-wrap: wrap;
+              width: 100%;
             }
             .band-list.out-to-left {
                 transform: translateZ(0) translateX(-100vw);
@@ -41,13 +50,11 @@
                 transform: translateZ(0) translateX(100vw);
             }
             .band-list li {
-              font-size: 0.5rem;
                 transition: 0.5s color;
                 list-style: none;
-                margin: 0.5rem;
+                margin: 0.5em;
                 text-align: center;
                 text-transform: uppercase;
-                  display: inline-block;
             }
             .band-list li a {
                 color: inherit;
@@ -127,7 +134,14 @@
                   </head>
                   <body>
 
-                    <div id="appContainer"></div>
+                    <div class="visualization-fullscreen main-visualization"></div>
+
+
+                    <p>Hello there
+                    </p>
+
+
+                    <div class="visualization-fullscreen main-visualization"></div>
 
                   </body>
               </html>
