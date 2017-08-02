@@ -183,25 +183,25 @@ window.fetch(require('./static/ngrams.json'))
   });
 
 function showBarChart (useLogScale) {
-  const margin = { top: 10, right: 30, bottom: 30, left: 40 };
+  const margin = { top: 10, right: 30, bottom: 60, left: 40 };
   const width = 960 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
-// set the ranges
-  const x = d3.scaleBand()
+  // Set scale for each axis
+  const xScale = d3.scaleBand()
           .range([0, width]);
-  const y = useLogScale ? d3.scaleLog() : d3.scaleLinear();
-  y.range([height, 0]);
+  const yScale = useLogScale ? d3.scaleLog() : d3.scaleLinear();
+  yScale.range([height, 0]);
+  const yScaleLog = d3.scaleLog()
+      .range([height, 0]);
 
-// append the svg object to the body of the page
-// append a 'group' element to 'svg'
-// moves the 'group' element to the top left margin
+  // Add an SVG object for the chart, with group inside
   const svg = d3.select('body')
-  .append('svg')
-    .attr('width', width + margin.left + margin.right)
-    .attr('height', height + margin.top + margin.bottom)
-  .append('g')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    .append('svg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
   d3.csv(require('./static/by-length.csv'), function (error, data) {
     if (error) throw error;
@@ -228,31 +228,33 @@ function showBarChart (useLogScale) {
       d.length = parseInt(d.length, 10);
     });
 
-    x.domain(allLengths.map((d) => d.length));
-    y.domain([0.5, d3.max(allLengths, (d) => d.count)]);
+    xScale.domain(allLengths.map((d) => d.length));
+    yScale.domain([0.5, d3.max(allLengths, (d) => d.count)]);
+    yScaleLog.domain([0.5, d3.max(allLengths, (d) => d.count)]);
 
     // append the bar rectangles to the svg element
     svg.selectAll('rect')
         .data(allLengths)
         .enter().append('rect')
         .attr('class', 'bar')
-        .attr('x', (d) => x(d.length))
-        .attr('width', x.bandwidth())
-        .attr('y', (d) => y(d.count))
-        .attr('height', (d) => height - y(d.count));
+        .attr('x', (d) => xScale(d.length))
+        .attr('width', xScale.bandwidth())
+        .attr('y', (d) => yScale(d.count))
+        .attr('height', (d) => height - yScale(d.count));
 
     // add the x Axis
     svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(xScale));
+
+    const yAxis = d3.axisLeft(yScale)
+      .ticks(4)
+      .tickFormat(d3.format('.0s'));
 
     // add the y Axis
     svg.append('g')
-        .call(
-          d3.axisLeft(y)
-            .ticks(4)
-            .tickFormat(d3.format('.0s')));
-
+      .attr('class', 'yAxis')
+        .call(yAxis);
 
     // text label for the y axis
     svg.append('text')
@@ -262,8 +264,32 @@ function showBarChart (useLogScale) {
         .attr('dy', '1em')
         .style('text-anchor', 'middle')
         .text('# of bands' + (useLogScale ? ' (logarithmic scale)' : ''));
+
+    // text label for the x axis
+    svg.append('text')
+        .attr('y', height + 26)
+        .attr('x', (width / 2))
+        .attr('dy', '1em')
+        .style('text-anchor', 'middle')
+        .text('Length of name');
+
+    function updateScale(toLog) {
+      const scale = toLog ? yScaleLog : yScale;
+      svg.selectAll('rect')
+        .data(allLengths)
+        .transition().duration(1000)
+        .attr('y', (d) => scale(d.count))
+        .attr('height', (d) => height - scale(d.count));
+
+      svg.selectAll('.yAxis')
+          .transition().duration(1000)
+          .call(yAxis.scale(scale));
+    }
+
+    window.setTimeout(() => updateScale(true), 1000);
+    window.setTimeout(() => updateScale(false), 2000);
+
   });
 }
 
 showBarChart(false);
-showBarChart(true);
