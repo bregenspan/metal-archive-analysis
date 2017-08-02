@@ -247,10 +247,12 @@ function showBarChart (useLogScale) {
     // add the x Axis
     svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(xScale));
+        .call(d3.axisBottom(xScale)
+             .tickSizeOuter(0));
 
     const yAxis = d3.axisLeft(yScale)
       .ticks(4)
+      .tickSizeOuter(0)
       .tickFormat(d3.format('.0s'));
 
     // add the y Axis
