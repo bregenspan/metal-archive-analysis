@@ -195,6 +195,8 @@ function showBarChart (useLogScale) {
   const yScaleLog = d3.scaleLog()
       .range([height, 0]);
 
+  xScale.paddingInner(0.1);
+
   // Add an SVG object for the chart, with group inside
   const svg = d3.select('body')
     .append('svg')
@@ -240,7 +242,7 @@ function showBarChart (useLogScale) {
         .attr('x', (d) => xScale(d.length))
         .attr('width', xScale.bandwidth())
         .attr('y', (d) => yScale(d.count))
-        .attr('height', (d) => height - yScale(d.count));
+        .attr('height', (d) => Math.max(height - yScale(d.count), 0));
 
     // add the x Axis
     svg.append('g')
@@ -273,21 +275,21 @@ function showBarChart (useLogScale) {
         .style('text-anchor', 'middle')
         .text('Length of name');
 
-    function updateScale(toLog) {
+    function updateScale (toLog) {
       const scale = toLog ? yScaleLog : yScale;
       svg.selectAll('rect')
         .data(allLengths)
         .transition().duration(1000)
         .attr('y', (d) => scale(d.count))
-        .attr('height', (d) => height - scale(d.count));
+        .attr('height', (d) => Math.max(height - scale(d.count), 0));
 
       svg.selectAll('.yAxis')
           .transition().duration(1000)
           .call(yAxis.scale(scale));
     }
 
-    window.setTimeout(() => updateScale(true), 1000);
-    window.setTimeout(() => updateScale(false), 2000);
+    let log = false;
+    //window.setInterval(() => updateScale(log = !log), 1000);
 
   });
 }
