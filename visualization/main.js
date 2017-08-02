@@ -1,3 +1,5 @@
+import * as d3 from 'd3';
+
 import BandList from './band-list.js';
 import BadSongComposer from './audio/bad-song-composer.js';
 
@@ -5,7 +7,7 @@ let currentBandList;
 let currentComposer;
 let currentLabel;
 
-const appContainer = document.getElementById('appContainer');
+const appContainer = document.querySelector('.main-visualization');
 
 const state = {
   bandIndex: 0
@@ -31,7 +33,7 @@ function showBandList (word, bands, index) {
     `;
   }
 
-  function updateLabel() {
+  function updateLabel () {
     currentLabel.querySelector('.word').innerHTML = word;
     currentLabel.querySelector('.count').innerHTML = `${bands.length} bands`;
     currentLabel.classList.remove('hide');
@@ -179,3 +181,89 @@ window.fetch(require('./static/ngrams.json'))
 
     showBandList(word, bands, wordIndex);
   });
+
+function showBarChart (useLogScale) {
+  const margin = { top: 10, right: 30, bottom: 30, left: 40 };
+  const width = 960 - margin.left - margin.right;
+  const height = 500 - margin.top - margin.bottom;
+
+// set the ranges
+  const x = d3.scaleBand()
+          .range([0, width]);
+  const y = useLogScale ? d3.scaleLog() : d3.scaleLinear();
+  y.range([height, 0]);
+
+// append the svg object to the body of the page
+// append a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+  const svg = d3.select('body')
+  .append('svg')
+    .attr('width', width + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+  .append('g')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+  d3.csv(require('./static/by-length.csv'), function (error, data) {
+    if (error) throw error;
+
+    const maxLength = d3.max(data, (d) => parseInt(d.length, 0));
+    const indexedByLength = data.reduce((acc, item) => {
+      acc[item.length] = item;
+      return acc;
+    }, {});
+    const allLengths = new Array(maxLength).fill().map((item, idx) => {
+      if (indexedByLength[idx + 1]) {
+        return indexedByLength[idx + 1];
+      } else {
+        return {
+          length: idx + 1,
+          count: 0
+        };
+      }
+    });
+
+    // format the data
+    allLengths.forEach((d) => {
+      d.count = parseInt(d.count, 10);
+      d.length = parseInt(d.length, 10);
+    });
+
+    x.domain(allLengths.map((d) => d.length));
+    y.domain([0.5, d3.max(allLengths, (d) => d.count)]);
+
+    // append the bar rectangles to the svg element
+    svg.selectAll('rect')
+        .data(allLengths)
+        .enter().append('rect')
+        .attr('class', 'bar')
+        .attr('x', (d) => x(d.length))
+        .attr('width', x.bandwidth())
+        .attr('y', (d) => y(d.count))
+        .attr('height', (d) => height - y(d.count));
+
+    // add the x Axis
+    svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(d3.axisBottom(x));
+
+    // add the y Axis
+    svg.append('g')
+        .call(
+          d3.axisLeft(y)
+            .ticks(4)
+            .tickFormat(d3.format('.0s')));
+
+
+    // text label for the y axis
+    svg.append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', 0 - margin.left)
+        .attr('x', 0 - (height / 2))
+        .attr('dy', '1em')
+        .style('text-anchor', 'middle')
+        .text('# of bands' + (useLogScale ? ' (logarithmic scale)' : ''));
+  });
+}
+
+showBarChart(false);
+showBarChart(true);

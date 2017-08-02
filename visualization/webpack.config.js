@@ -20,7 +20,7 @@ module.exports = {
           }
         }
       },
-      { test: /\.(json|mp3)$/, use: 'file-loader' }
+      { test: /\.(csv|json|mp3)$/, use: 'file-loader' }
     ]
   },
   plugins: [
