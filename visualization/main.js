@@ -149,6 +149,10 @@ window.fetch(require('./static/ngrams.json'))
     const bands = data[wordIndex].bands;
 
     document.addEventListener('keyup', (e) => {
+
+      // TODO: only prevent default action when we know band list is active item on page
+      e.preventDefault();
+
       switch (e.code) {
         case 'ArrowRight':
           if (wordIndex < data.length - 2) {
@@ -297,3 +301,4 @@ function showBarChart (useLogScale) {
 }
 
 showBarChart(false);
+showBarChart(true);
