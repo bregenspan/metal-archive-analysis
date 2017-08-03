@@ -99,6 +99,8 @@ if __name__ == "__main__":
     f = FreqDist(all_ngrams)
     words = []
     for (word, count,) in f.most_common(args.max_total):
+        print(word)
+        continue
         bands = [band for band in get_bands(word)]
         seen = set()
         duplicate_names = set()

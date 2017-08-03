@@ -4,31 +4,40 @@
     </head>
                   <body>
 
+                    [Band name list - just show overloaded names in this spot, with "top 20" words highlighted]
                     <div class="visualization-fullscreen main-visualization"></div>
 
+                    <p>The Metal Archives, an attempt to create a comprehensive database of heavy metal bands, is an impressive dataset. It currently contains 117,238 bands, each of which is classified by sub-genre (e.g. "Epic Doom Metal", "Stoner Sludge"), and common lyrical themes ("Darkness", "Abstract", "Religion"), as well as more prosaic metadata such as country of origin, formation date, whether the band is still active, etc.</p>
 
-                    <p>"Metal bands: they have cool names." That is more or less the thesis of this essay.
-                    </p>
+                    <p>There is a lot of interesting information here, but in this post I want to explore probably the most superficial aspect: the band names themselves.</p>
 
+                    <p>Above is a list of "overloaded" band names: those which include multiple of the top 20 most common words found in heavy metal band names. Even read without context, most of these signifier-rich names very obviously belong to heavy metal bands, some comically so ("Stormthrone of Dripping Blood").</p>
+
+                    [Bar chart: top X words] 
+
+                    (Click a bar to show band list?) band list on right, bar chart on left?
+
+                    <div class="chart"></div>
 
                     <div class="visualization-fullscreen main-visualization"></div>
+
+                    Pie chart for all band names w/ ones containing top words carved out? (note: there is some overlap...)
+
+                    <p>Longest band names</p>
 
                     <p>You may have noticed that some of these names are pretty bad. And you might also look at the extensive lists of bands with "death", "dark", etc. in name and wondered if all of the credible metal band names are exhausted.</p>
-                    <p>To explore this further, we can use machine learning to automatically generate names based on the full list of band names.</p>
+                    <p>To explore this further, we can use machine learning to automatically generate names based on the full list of band names. We would be by no means the first to do so -- see <a href="http://lewisandquark.tumblr.com/post/160407271482/metal-band-names-invented-by-neural-network">Janelle Shane's earlier effort at this</a></p>
 
                     <p>Show what training looks like:</p>
 
                     <p>Show sampling:</p>
 
 
-                    <p>Some highlights for me:<p>
+                    <p>Some highlights/lowlights of what it generated:<p>
                     <dl>
 
                       <dt>Devil's Killers</dt>
                       <dd>Arguably too cheesy for a metal band name. But it might be perfectly good for rockabilly/"psychobilly". It appears to have last been used for a <a href="https://groovyageofhorror.tumblr.com/post/112319345016/the-devils-killers">men's pulp magazine story</a>.</dd>
-
-                      <dt>Embrace the Sins</dt>
-                      <dd>A sensible admonition.</dd>
 
                       <dt>Satanic Empire</dt>
                       <dd>Another band has a demo CD called "<a href="https://www.metal-archives.com/albums/Fields_of_the_Filthy/Hymns_to_the_Satanic_Empire/277377">Hymns to the Satanic Empire</a>". But no band called this yet; why?</dd>
@@ -36,8 +45,8 @@
                       <dt>Dead Painful</dt>
                       <dd>Sounds like a sixth member of the Sex Pistols, but could also make for a decent British metal band name.</dd>
 
-                      <dt>Killing Heaven</dt>
-                      <dd></dd>
+                      <dt>Killing Heaven / Embrace the Sins</dt>
+                      <dd>Sometimes the RNN tries too hard.</dd>
 
                       <dt>Car on Grave</dt>
                       <dd>"just put my car on my grave"</dd>
@@ -51,6 +60,10 @@
                     </dl>
 
 
+                    <h3>Links</h3>
+                    <ul>
+                      <li></li>
+                    </ul>
 
                   </body>
               </html>
