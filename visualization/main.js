@@ -1,3 +1,5 @@
+import './main.scss';
+
 import * as d3 from 'd3';
 
 import BandList from './band-list.js';

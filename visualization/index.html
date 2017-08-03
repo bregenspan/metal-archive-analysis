@@ -1,154 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <style>
-            * {
-              box-sizing: border-box;
-            }
-            html, body {
-                margin: 0;
-                padding: 0;
-            }
-            .visualization-fullscreen {
-                position: relative;
-                width: 100vw;
-                height: 100vh;
-                font-size: 12px;
-                overflow: hidden;
-            }
-            .visualization-fullscreen.animate {
-                opacity: 0;
-                transition: 0.2s opacity;
-            }
-            .visualization-fullscreen.visible {
-                opacity: 1;
-            }
-            body {
-                background: #000;
-                color: #666;
-            }
-            .band-list-container {
-                height: 100vh;
-                overflow: scroll;
-            }
-            .band-list {
-              justify-content: center;
-              margin-top: 0;
-              padding: 0;
-              position: absolute;
-              text-align: center;
-              transition: 1s transform ease-in-out;
-              display: flex;
-              flex-direction: row;
-              flex-wrap: wrap;
-              width: 100%;
-            }
-            .band-list.out-to-left {
-                transform: translateZ(0) translateX(-100vw);
-            }
-            .band-list.out-to-right {
-                transform: translateZ(0) translateX(100vw);
-            }
-            .band-list li {
-                transition: 0.5s color;
-                list-style: none;
-                margin: 0.5em;
-                text-align: center;
-                text-transform: uppercase;
-            }
-            .band-list li a {
-                color: inherit;
-                text-decoration: none;
-                border-bottom: 4px #000 solid;
-                transition: 1s border;
-                //position: relative;
-                //display: inline-block;
-            }
-            .band-list li a:focus {
-                outline: none;
-                border-bottom: 4px #966 solid;
-            }
-
-            .band-list li em {
-                color: #999;
-                font-style: normal;
-                font-weight: bold;
-            }
-
-            .band-list .selected {
-                color: #966;
-            }
-
-            .band-list li.selected em {
-                color: #944;
-            }
-
-            .active-label {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                /* right: 0; */
-                /* bottom: 0; */
-                /* height: 50px; */
-                /* width: 100px; */
-                background: #000;
-                border: 3px #333 double;
-                text-align: center;
-                /* display: flex; */
-                /* align-items: center; */
-                /* justify-content: center; */
-                text-transform: uppercase;
-                padding: 10px 20px;
-                font-size: 40px;
-                margin: auto;
-                /* display: inline-block; */
-                /* height: 0; */
-                /* width: 0; */
-                transform: translate(-50%, -50%);
-                color: #999;
-                box-shadow: 0 0 0 2px #000;
-                z-index: 10;
-                opacity: 1;
-                transition: 0.4s opacity;
-            }
-
-            .active-label .count {
-                display: block;
-                font-size: 0.4em;
-                font-weight: 100;
-                /* opacity: 0.4; */
-                color: #666;
-                position: absolute;
-                background: #000;
-                border: 3px #333 double;
-                padding: 4px 8px;
-                right: -24px;
-                bottom: -23px;
-            }
-
-            .hide {
-              opacity: 0;
-            }
-				
-
-						svg {
-							background: #000;
-						}
-
-            path, line {
-              stroke: #999;
-            }
-
-            .bar, text {
-              fill: #999;
-            }
-
-            .bar:hover {
-              fill: #666;
-            }
-
-                      </style>
-                  </head>
+    </head>
                   <body>
 
                     <div class="visualization-fullscreen main-visualization"></div>
@@ -163,7 +16,6 @@
                     <p>You may have noticed that some of these names are pretty bad. And you might also look at the extensive lists of bands with "death", "dark", etc. in name and wondered if all of the credible metal band names are exhausted.</p>
                     <p>To explore this further, we can use machine learning to automatically generate names based on the full list of band names.</p>
 
-                    
                     <p>Show what training looks like:</p>
 
                     <p>Show sampling:</p>
@@ -198,11 +50,6 @@
 
                     </dl>
 
-
-                    <ul>
-                      <li>
-                        Devil's Killers
-                      </li>
 
 
                   </body>
