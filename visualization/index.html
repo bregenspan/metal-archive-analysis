@@ -11,10 +11,10 @@
 
                     <p>There is a lot of interesting information here, but in this post I want to explore probably the most superficial aspect: the band names themselves.</p>
 
-                    <p>Above is a list of "overloaded" band names: those which include multiple of the top 20 most common words found in heavy metal band names. Even read without context, most of these signifier-rich names very obviously belong to heavy metal bands, some comically so ("Stormthrone of Dripping Blood").</p>
+                    <p>Above is a list of "overloaded" band names: those which include multiple of the top 20 most common words found in heavy metal band names. Even read without context, most of these signifier-rich names very obviously belong to metal bands, some comically so (see "Stormthrone of Dripping Blood").</p>
 
+                    <h3>Most common words in heavy metal band names</h3>
                     [Bar chart: top X words] 
-
                     (Click a bar to show band list?) band list on right, bar chart on left?
 
                     <div class="chart"></div>
@@ -23,12 +23,18 @@
 
                     Pie chart for all band names w/ ones containing top words carved out? (note: there is some overlap...)
 
-                    <p>Longest band names</p>
+                    <h3>Length of band names</h3>
 
-                    <p>You may have noticed that some of these names are pretty bad. And you might also look at the extensive lists of bands with "death", "dark", etc. in name and wondered if all of the credible metal band names are exhausted.</p>
-                    <p>To explore this further, we can use machine learning to automatically generate names based on the full list of band names. We would be by no means the first to do so -- see <a href="http://lewisandquark.tumblr.com/post/160407271482/metal-band-names-invented-by-neural-network">Janelle Shane's earlier effort at this</a></p>
+                    <p class="trigger-shortest-names">There is not much room for creativity with a single-letter band name.</p>
 
-                    <p>Show what training looks like:</p>
+                    <p class="trigger-longest-names">The longer a metal band name gets, the easier it is to imagine the weed-fueled dorm-room conversation that led to its creation.</p>
+                    
+
+                    <h3>Should we fear exhaustion of feasible band names</h3>
+                    <p>Say you want to name your metal band. You may have noticed that some of the names of existing bands are pretty bad. And you might also look at the extensive lists of bands with "death", "dark", etc. in name and wondered if all of the credible metal band names are exhausted.</p>
+                    <p>To find names that follow similar patterns but are not yet taken, we can use machine learning to automatically generate names. (We would be by no means the first to do so -- see <a href="http://lewisandquark.tumblr.com/post/160407271482/metal-band-names-invented-by-neural-network">Janelle Shane's earlier, more complete effort at this</a>)</p>
+                    <p>Using <a href="https://github.com/sherjilozair/char-rnn-tensorflow">char-rnn-tensorflow</a>, I trained a neural network on the full list of band names. (See instructions here if interested)</p>
+
 
                     <p>Show sampling:</p>
 
@@ -38,9 +44,6 @@
 
                       <dt>Devil's Killers</dt>
                       <dd>Arguably too cheesy for a metal band name. But it might be perfectly good for rockabilly/"psychobilly". It appears to have last been used for a <a href="https://groovyageofhorror.tumblr.com/post/112319345016/the-devils-killers">men's pulp magazine story</a>.</dd>
-
-                      <dt>Satanic Empire</dt>
-                      <dd>Another band has a demo CD called "<a href="https://www.metal-archives.com/albums/Fields_of_the_Filthy/Hymns_to_the_Satanic_Empire/277377">Hymns to the Satanic Empire</a>". But no band called this yet; why?</dd>
 
                       <dt>Dead Painful</dt>
                       <dd>Sounds like a sixth member of the Sex Pistols, but could also make for a decent British metal band name.</dd>
@@ -59,6 +62,7 @@
 
                     </dl>
 
+                    What's interesting about the output here is that it seems to roughly mirror the expected length of a band name, not to mention the words we'd expect to find in one.
 
                     <h3>Links</h3>
                     <ul>
