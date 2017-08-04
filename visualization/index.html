@@ -18,61 +18,65 @@
                       <p>In the background is a list of "overloaded" band names: those which include multiple of the top 20 most common words found in heavy metal band names. Even read without context, most of these signifier-rich names very obviously belong to metal bands, some comically so (see "Stormthrone of Dripping Blood").</p>
                     </section>
 
-                    <h3>Most common words in heavy metal band names</h3>
-                    [Bar chart: top X words] 
-                    (Click a bar to show band list?) band list on right, bar chart on left?
+                    <section class="content-fullscreen">
+                      <h3>Most common words in heavy metal band names</h3>
+                      [Bar chart: top X words] 
+                      (Click a bar to show band list?) band list on right, bar chart on left?
 
-                    <div class="chart"></div>
+                      <div class="chart"></div>
+                      <div class="visualization-fullscreen main-visualization"></div>
+                    </section>
 
-                    <div class="visualization-fullscreen main-visualization"></div>
-
-                    Pie chart for all band names w/ ones containing top words carved out? (note: there is some overlap...)
-
+                    <section class="content-fullscreen">
                     <h3>Length of band names</h3>
 
                     <p class="trigger-shortest-names">There is not much room for creativity with a single-letter band name.</p>
 
                     <p class="trigger-longest-names">The longer a metal band name gets, the easier it is to imagine the weed-fueled dorm-room conversation that led to its creation.</p>
-                    
+                    </section>
 
-                    <h3>Should we fear exhaustion of feasible band names</h3>
-                    <p>Say you want to name your metal band. You may have noticed that some of the names of existing bands are pretty bad. And you might also look at the extensive lists of bands with "death", "dark", etc. in name and wondered if all of the credible metal band names are exhausted.</p>
-                    <p>To find names that follow similar patterns but are not yet taken, we can use machine learning to automatically generate names. (We would be by no means the first to do so -- see <a href="http://lewisandquark.tumblr.com/post/160407271482/metal-band-names-invented-by-neural-network">Janelle Shane's earlier, more complete effort at this</a>)</p>
-                    <p>Using <a href="https://github.com/sherjilozair/char-rnn-tensorflow">char-rnn-tensorflow</a>, I trained a neural network on the full list of band names. (See instructions here if interested)</p>
+                    <section class="content-fullscreen"> 
+                      <h3>Should we fear exhaustion of feasible band names?</h3>
+                      <p>Say you want to name your metal band. You may have noticed that some of the names of existing bands are pretty bad. And you might also look at the extensive lists of bands with "death", "dark", etc. in name and wondered if all of the credible metal band names are exhausted.</p>
+                      <p>Now, we can always come up with lists of words that we want to randomly mix together, which is how most random name generators (<a href="http://p3.no/humor/the-internets-official-heavy-metal-band-name-generator/">e.g.</a>) on the internet work. But the result of doing so will be limited and formulaic, and we'll miss out on the dumber possible names that involve long, complex phrases or even entirely made-up words that we could not anticipate.</p>
+                      <p>To find names that follow similar patterns but are not yet taken, we can use machine learning to automatically generate names. (We would be by no means the first to do so -- see <a href="http://lewisandquark.tumblr.com/post/160407271482/metal-band-names-invented-by-neural-network">Janelle Shane's earlier, more complete effort at this</a>)</p>
+                      <p>Using <a href="https://github.com/sherjilozair/char-rnn-tensorflow">char-rnn-tensorflow</a>, I trained a neural network on the full list of band names. (See instructions here if interested)</p>
 
 
-                    <p>Show sampling:</p>
+                      <p>Show sampling:</p>
 
 
-                    <p>Some highlights/lowlights of what it generated:<p>
-                    <dl>
+                      <p>Some highlights/lowlights of what it generated:<p>
+                      <dl>
 
-                      <dt>Devil's Killers</dt>
-                      <dd>Arguably too cheesy for a metal band name. But it might be perfectly good for rockabilly/"psychobilly". It appears to have last been used for a <a href="https://groovyageofhorror.tumblr.com/post/112319345016/the-devils-killers">men's pulp magazine story</a>.</dd>
+                        <dt>Devil's Killers</dt>
+                        <dd>Arguably too cheesy for a metal band name. But it might be perfectly good for rockabilly/"psychobilly". It appears to have last been used for a <a href="https://groovyageofhorror.tumblr.com/post/112319345016/the-devils-killers">men's pulp magazine story</a>.</dd>
 
-                      <dt>Dead Painful</dt>
-                      <dd>Sounds like a sixth member of the Sex Pistols, but could also make for a decent British metal band name.</dd>
+                        <dt>Dead Painful</dt>
+                        <dd>Sounds like a sixth member of the Sex Pistols, but could also make for a decent British metal band name.</dd>
 
-                      <dt>Killing Heaven / Embrace the Sins</dt>
-                      <dd>Sometimes the RNN tries too hard.</dd>
+                        <dt>Killing Heaven / Embrace the Sins</dt>
+                        <dd>Sometimes the RNN tries too hard.</dd>
 
-                      <dt>Car on Grave</dt>
-                      <dd>"just put my car on my grave"</dd>
+                        <dt>Car on Grave</dt>
+                        <dd>"just put my car on my grave"</dd>
 
-                      <dt>The Vaginal Gore Curse</dt>
-                      <dd>We have taught the machine to be unpleasant.</dd>
+                        <dt>The Vaginal Gore Curse</dt>
+                        <dd>We have taught the machine to be unpleasant.</dd>
 
-                      <dt>Requiembran</dt>
-                      <dd>"All your life, you've been a cereal inventor. Make a good one for me when I die."</dd>
+                        <dt>Requiembran</dt>
+                        <dd>"All your life, you've been a cereal inventor. Make a good one for me when I die."</dd>
 
-                    </dl>
+                      </dl>
 
-                    What's interesting about the output here is that it seems to roughly mirror the expected length of a band name, not to mention the words we'd expect to find in one.
+                      <p>What's interesting about the output here is that it seems to roughly mirror the expected length of a band name, not to mention the words we'd expect to find in one.</p>
 
-                    <h3>Links</h3>
-                    <ul>
-                      <li></li>
-                    </ul>
+                    </section>
 
-                  </body>
-              </html>
+                      <h3>Links</h3>
+                      <ul>
+                        <li></li>
+                      </ul>
+
+  </body>
+</html>

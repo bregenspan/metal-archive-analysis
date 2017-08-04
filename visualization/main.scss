@@ -19,6 +19,10 @@ body {
   color: $text-color;
 }
 
+a { 
+  color: $text-color-dark;
+}
+
 %arcane-border {
   border: 3px $border-color double;
   box-shadow: 0 0 0 7px $background-color;
@@ -29,9 +33,9 @@ body {
   width: 100vw;
   min-height: 100vh;
   z-index: 20;
-  p {
+  > * {
     @extend %arcane-border;
-    background: $background-color;
+    background: fade-out($background-color, 0.1);
     margin: 20px;
     max-width: 600px;
     padding: 14px 16px;
@@ -39,6 +43,7 @@ body {
 }
 
 .visualization-fullscreen {
+  background: $background-color;
   position: relative;
   width: 100vw;
   height: 100vh;
