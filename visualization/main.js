@@ -154,6 +154,10 @@ window.fetch(require('./static/names-with-multiple-words.json'))
     overloadedBandsContainer.appendChild(overloadedBandList.el);
     overloadedBandList.onMounted();
 
+    // Randomly highlight bands
+    window.setInterval(() => {
+      overloadedBandList.setIndex(Math.floor(Math.random() * bands.length - 1));
+    }, 1000);
 
   });
 
