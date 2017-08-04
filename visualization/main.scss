@@ -19,14 +19,19 @@ body {
   color: $text-color;
 }
 
+%arcane-border {
+  border: 3px $border-color double;
+  box-shadow: 0 0 0 7px $background-color;
+}
+
 .content-fullscreen {
   position: relative;
   width: 100vw;
   min-height: 100vh;
   z-index: 20;
   p {
+    @extend %arcane-border;
     background: $background-color;
-    border: 3px $border-color double;
     margin: 20px;
     max-width: 600px;
     padding: 14px 16px;
@@ -107,11 +112,11 @@ body {
 }
 
 .active-label {
+  @extend %arcane-border;
   position: absolute;
   left: 50%;
   top: 50%;
   background: $background-color;
-  border: 3px $border-color double;
   text-align: center;
   text-transform: uppercase;
   padding: 10px 20px;
@@ -119,7 +124,6 @@ body {
   margin: auto;
   transform: translate(-50%, -50%);
   color: $secondary-color;
-  box-shadow: 0 0 0 2px $background-color;
   z-index: 10;
   opacity: 1;
   transition: 0.4s opacity;
