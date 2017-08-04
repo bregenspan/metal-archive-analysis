@@ -157,8 +157,14 @@ a {
   position: fixed;
 }
 
-svg {
-  background: $background-color;
+aside[data-vis]:not(.fixed) {
+  position: relative;
+}
+
+.chart-control {
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 path, line {

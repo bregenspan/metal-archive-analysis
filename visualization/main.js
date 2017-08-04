@@ -32,7 +32,7 @@ window.fetch(require('./static/ngrams.json'))
     const word = data[wordIndex].word;
     const bands = data[wordIndex].bands;
 
-    const interactiveBandList = new InteractiveBandList(document.querySelector('.main-visualization'));
+    const interactiveBandList = new InteractiveBandList(document.querySelector('[data-vis="band-browser"]'));
 
     document.addEventListener('keyup', (e) => {
       switch (e.code) {
@@ -48,7 +48,9 @@ window.fetch(require('./static/ngrams.json'))
             interactiveBandList.show(data[wordIndex].word, data[wordIndex].bands, wordIndex);
           }
           break;
-        case 'ArrowUp':
+
+        // up/down navigation only makes sense if bands are displayed in single-column layout...
+        /* case 'ArrowUp':
         case 'ArrowDown':
           if (e.code === 'ArrowDown') {
             interactiveBandList.nextBand();
@@ -56,36 +58,39 @@ window.fetch(require('./static/ngrams.json'))
             interactiveBandList.previousBand();
           }
           break;
+          */
       }
     });
 
     interactiveBandList.show(word, bands, wordIndex);
   });
 
-function showBarChart (useLogScale) {
+
+function showBarChart (placeholder, csvFile) {
   const margin = { top: 10, right: 30, bottom: 60, left: 40 };
-  const width = 960 - margin.left - margin.right;
+  const width = placeholder.clientWidth - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
   // Set scale for each axis
   const xScale = d3.scaleBand()
-          .range([0, width]);
-  const yScale = useLogScale ? d3.scaleLog() : d3.scaleLinear();
-  yScale.range([height, 0]);
+                  .range([0, width]);
+  const yScale = d3.scaleLinear()
+                  .range([height, 0]);
+
   const yScaleLog = d3.scaleLog()
-      .range([height, 0]);
+                  .range([height, 0]);
 
   xScale.paddingInner(0.1);
 
   // Add an SVG object for the chart, with group inside
-  const svg = d3.select('body')
+  const svg = d3.select(placeholder)
     .append('svg')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
     .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-  d3.csv(require('./static/by-length.csv'), function (error, data) {
+  d3.csv(csvFile, function (error, data) {
     if (error) throw error;
 
     const maxLength = d3.max(data, (d) => parseInt(d.length, 0));
@@ -128,7 +133,8 @@ function showBarChart (useLogScale) {
     svg.append('g')
         .attr('transform', 'translate(0,' + height + ')')
         .call(d3.axisBottom(xScale)
-             .tickSizeOuter(0));
+             .tickSizeOuter(0)
+             .tickValues(allLengths.map((d) => d.length % 5 === 0 ? d.length : null)));
 
     const yAxis = d3.axisLeft(yScale)
       .ticks(4)
@@ -147,7 +153,7 @@ function showBarChart (useLogScale) {
         .attr('x', 0 - (height / 2))
         .attr('dy', '1em')
         .style('text-anchor', 'middle')
-        .text('# of bands' + (useLogScale ? ' (logarithmic scale)' : ''));
+        .text('# of bands');
 
     // text label for the x axis
     svg.append('text')
@@ -155,7 +161,7 @@ function showBarChart (useLogScale) {
         .attr('x', (width / 2))
         .attr('dy', '1em')
         .style('text-anchor', 'middle')
-        .text('Length of name');
+        .text('Length of name (in characters)');
 
     function updateScale (toLog) {
       const scale = toLog ? yScaleLog : yScale;
@@ -170,11 +176,14 @@ function showBarChart (useLogScale) {
           .call(yAxis.scale(scale));
     }
 
-    let log = false;
-    //window.setInterval(() => updateScale(log = !log), 1000);
-
-  });
+    document.getElementById('useLogScale').addEventListener('change', function (e) {
+      updateScale(this.checked);
+    });
+  });      
 }
 
-showBarChart(false);
-showBarChart(true);
+function showNameLengthBarChart () {
+  showBarChart(document.querySelector('[data-vis="lengths"]'), require('./static/by-length.csv'));
+}
+
+showNameLengthBarChart();

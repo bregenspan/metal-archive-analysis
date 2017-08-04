@@ -23,14 +23,23 @@
                       [Bar chart: top X words] 
                       (Click a bar to show band list?) band list on right, bar chart on left?
 
-                      <div class="chart"></div>
-                      <div class="visualization-fullscreen main-visualization"></div>
+                      <div class="visualization-fullscreen" data-vis="band-browser"></div>
                     </section>
 
                     <section class="content-fullscreen">
                     <h3>Length of band names</h3>
 
+                    <aside data-vis="lengths">
+                      <label class="chart-control" for="useLogScale">
+                        Log scale?
+                        <input id="useLogScale" type="checkbox"/>
+                      </label>
+                    </aside>
+
+                    <div class="chart"></div>
                     <p class="trigger-shortest-names">There is not much room for creativity with a single-letter band name.</p>
+
+                    <p>If we switch the chart to a log scale</p> 
 
                     <p class="trigger-longest-names">The longer a metal band name gets, the easier it is to imagine the weed-fueled dorm-room conversation that led to its creation.</p>
                     </section>
