@@ -47,8 +47,15 @@ for word in words:
             continue
 
         for band in get_bands("{}%{}".format(word, word2)):
-            all_overloaded_names.add(band["name"])
+            all_overloaded_names.add(band)
         for band in get_bands("{}%{}".format(word2, word)):
-            all_overloaded_names.add(band["name"])
+            all_overloaded_names.add(band)
 
-print(json.dumps([name for name in all_overloaded_names], indent=2))
+print(json.dumps({
+    "bands": [
+        {
+            "name": band["name"],
+            "id": band["id"]
+        } for band in all_overloaded_names],
+    "words": words
+}))
