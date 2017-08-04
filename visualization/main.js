@@ -94,7 +94,7 @@ function transition (oldEl, newEl, direction) {
  * @param {Array<Object>} bands
  */
 function createBandList (word, bands) {
-  const bandList = new BandList(state, bands, word);
+  const bandList = new BandList(state, bands, [word]);
 
   const options = {
 
@@ -140,6 +140,22 @@ function createBandList (word, bands) {
 
   return bandList;
 }
+
+
+window.fetch(require('./static/names-with-multiple-words.json'))
+  .then((data) => {
+    return data.json();
+  })
+  .then((data) => {
+    const bands = data.bands;
+    const words = data.words;
+    const overloadedBandList = new BandList(state, bands, words);
+    const overloadedBandsContainer = document.querySelector('[data-vis="overloaded"]');
+    overloadedBandsContainer.appendChild(overloadedBandList.el);
+    overloadedBandList.onMounted();
+
+
+  });
 
 window.fetch(require('./static/ngrams.json'))
   .then((data) => {

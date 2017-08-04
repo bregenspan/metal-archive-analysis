@@ -1,7 +1,9 @@
-$text-color: #666;
+$text-color: #ccc;
+$text-color-dark: #666;
 $background-color: #000;
-$secondary-color: #999;
-$border-color: #333;
+$secondary-color: #777;
+//$border-color: #333;
+$border-color: #666;
 
 $highlight-color: #966; 
 
@@ -15,6 +17,20 @@ html, body {
 body {
   background: $background-color;
   color: $text-color;
+}
+
+.content-fullscreen {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  z-index: 20;
+  p {
+    background: $background-color;
+    border: 3px $border-color double;
+    margin: 20px;
+    max-width: 600px;
+    padding: 14px 16px;
+  }
 }
 
 .visualization-fullscreen {
@@ -38,6 +54,7 @@ body {
 }
 
 .band-list {
+  color: $text-color-dark;
   justify-content: center;
   margin-top: 0;
   padding: 0;
@@ -112,7 +129,7 @@ body {
   display: block;
   font-size: 0.4em;
   font-weight: 100;
-  color: $text-color;
+  color: $text-color-dark;
   position: absolute;
   background: $background-color;
   border: 3px $border-color double;
@@ -123,6 +140,12 @@ body {
 
 .hide {
   opacity: 0;
+}
+
+.fixed {
+  left: 0;
+  top: 0;
+  position: fixed;
 }
 
 svg {
@@ -138,5 +161,5 @@ path, line {
 }
 
 .bar:hover {
-  fill: $text-color;
+  fill: $text-color-dark;
 }

@@ -4,13 +4,19 @@ function linkifyBand (name, id) {
 }
 
 /**
- * Band list component
+ * Displays a list of bands with optional highlighting of terms in band names
  */
 export default class BandList {
-  constructor (state, bandList, highlightWord) {
+
+  /**
+   * @param {object} state - global app state object
+   * @param {Array} bandList - list of bands
+   * @param {Array<string>} highlightWords - one or more words to highlight in names
+   */
+  constructor (state, bandList, highlightWords) {
     this.state = state;
 
-    const highlightRegex = new RegExp(`(${highlightWord})`, 'i');
+    const highlightRegex = new RegExp(`(${highlightWords.join('|')})`, 'gi');
     const list = document.createElement('ul');
     list.className = 'band-list';
     bandList.forEach((band, index) => {
